@@ -1,4 +1,6 @@
+os: osx
 language: node_js
+sudo: required
 node_js:
   - stable
 cache:
@@ -9,4 +11,11 @@ install:
   - npm run build
 script:
     - ./deploy.sh
+# deploy:
+# provider: pages
+# skip-cleanup: true
+# github-token: $GITHUB_ACCESS_TOKEN  # Set in travis-ci.org dashboard, marked secure https://docs.travis-ci.com/user/deployment/pages/#Setting-the-GitHub-token
+# target-branch: gh-pages
+# local-dir: .vuepress/dist
+# on:
 branch: master
