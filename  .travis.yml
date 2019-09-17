@@ -1,18 +1,17 @@
 language: node_js
-node_js:
-  - lts/*
+node_js: stable # 安装Node当前的稳定版本
 branches:
   only:
   - master
 cache:
   directories:
-    - node_modules
+    - node_modules # 要缓存的文件夹
 before_install:
   - chmod +x deploy.sh
 install:
-    - yarn
+    - yarn install
 script:
-    - yarn run docs:build
+    - ./deploy.sh
 deploy:
   provider: pages
   skip-cleanup: true
