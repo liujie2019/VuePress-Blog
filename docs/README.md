@@ -1,7 +1,7 @@
 ---
 home: true
 lang: zh-CN
-heroText: A  Personal Blog 自动化66666
+heroText: A  Personal Blog 自动化8888
 heroImage: /background.jpg
 actionText: 快速上手 →
 actionLink: /zh/guide/

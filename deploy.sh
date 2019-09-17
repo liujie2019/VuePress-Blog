@@ -1,10 +1,10 @@
 #!/usr/bin/env sh
 
 # 终止一个错误
-# set -e
+set -e
 
 # 构建
-npm run docs:build
+yarn run docs:build
 
 # 进入生成的构建文件夹
 cd docs/.vuepress/dist
@@ -17,7 +17,8 @@ git add -A
 git commit -m 'deploy'
 
 # 如果你想要部署到 https://<USERNAME>.github.io
-git push -f https://${h}@github.com/liujie2019/liujie2019.github.io.git master
+# git push -f git@github.com:liujie2019/liujie2019.github.io.git master
+git push -f https://${token}@github.com/liujie2019/liujie2019.github.io.git master
 
 # 如果你想要部署到 https://<USERNAME>.github.io/<REPO>
 # git push -f git@github.com:<USERNAME>/<REPO>.git master:gh-pages
