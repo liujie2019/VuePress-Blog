@@ -7,8 +7,12 @@ branches:
 cache:
   directories:
     - node_modules
+before_install:
+  - chmod +x deploy.sh
+install:
+    - yarn
 script:
-    - npm run docs:build
+    - ./deploy.sh
 deploy:
   provider: pages
   skip-cleanup: true
