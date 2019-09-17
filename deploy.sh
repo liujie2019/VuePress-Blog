@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # 终止一个错误
-set -e
+# set -e
 
 # 构建
 npm run docs:build
