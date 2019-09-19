@@ -19,7 +19,7 @@ module.exports = [
     }, {
       text: '数据库',
       items: [
-        { text: 'database', link: '/database/' + sidebar['/database/'][0]['children'][0] }
+        { text: 'Mysql', link: '/database/' + sidebar['/database/'][0]['children'][0] }
       ]
     }
 ];
