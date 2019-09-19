@@ -1,5 +1,6 @@
 const sidebar = require('./conf/sidebarConf');
 const nav = require('./conf/navConf');
+const pluginConf = require('./conf/pluginConf.js');
 module.exports = {
     title: 'VuePress Blog',
     description: '生命的道路上永远没有捷径可言，只有脚踏实地走下去',
@@ -45,14 +46,5 @@ module.exports = {
             }
         }
     },
-    plugins: [
-      ['@vuepress/back-to-top'],
-      ['@vuepress/pwa', {
-         serviceWorker: true,
-         updatePopup: {
-           message: "发现新内容可用",
-           buttonText: "刷新"
-         }
-       }
-     ]]
+    plugins: pluginConf
 }
