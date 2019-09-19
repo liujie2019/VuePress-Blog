@@ -11,7 +11,9 @@ module.exports = {
     // },
     head: [
         ['link', { rel: 'icon', href: '/favicon.ico' }], // 增加一个自定义的 favicon(网页标签的图标)
+        ['link', { rel: 'manifest', href: '/manifest.json' }]
     ],
+    serviceWorker: true,
     markdown: {
         lineNumbers: true // 代码块显示行号
     },
@@ -36,9 +38,16 @@ module.exports = {
         // 默认为 false，设置为 true 来启用，当前 markdown 的 github 代码链接
         editLinks: true,
         // 自定义编辑链接的文本。默认是 "Edit this page"
-        editLinkText: '查看原文 | 编辑文档'
+        editLinkText: '查看原文 | 编辑文档',
+        serviceWorker: {
+            updatePopup: {
+                message: "发现新内容可用",
+                buttonText: "刷新"
+            }
+        }
     },
     plugins: [
-        '@vuepress/back-to-top'
+        '@vuepress/back-to-top',
+        '@vuepress/pwa'
     ]
 }

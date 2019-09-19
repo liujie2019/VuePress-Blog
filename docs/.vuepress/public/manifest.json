@@ -1,0 +1,16 @@
+{
+    "name": "自由的博客",
+    "short_name": "自由",
+    "description": "自由的文档",
+    "theme_color": "#2196f3",
+    "background_color": "#2196f3",
+    "display": "standalone",
+    "start_url": "index.html",
+    "icons": [
+      {
+        "src": "/background.jpg",
+        "sizes": "144x144",
+        "type": "image/jpg"
+      }
+    ]
+}
