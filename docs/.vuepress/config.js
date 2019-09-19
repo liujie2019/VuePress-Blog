@@ -13,7 +13,6 @@ module.exports = {
         ['link', { rel: 'icon', href: '/favicon.ico' }], // 增加一个自定义的 favicon(网页标签的图标)
         ['link', { rel: 'manifest', href: '/manifest.json' }]
     ],
-    serviceWorker: true,
     markdown: {
         lineNumbers: true // 代码块显示行号
     },
@@ -47,7 +46,13 @@ module.exports = {
         }
     },
     plugins: [
-        '@vuepress/back-to-top',
-        '@vuepress/pwa'
-    ]
+      ['@vuepress/back-to-top'],
+      ['@vuepress/pwa', {
+         serviceWorker: true,
+         updatePopup: {
+           message: "发现新内容可用",
+           buttonText: "刷新"
+         }
+       }
+     ]]
 }
