@@ -1,13 +1,7 @@
 ---
 title: Koa 中间件机制
-lang: zh
-meta:
-  - name: description
-    content: Koa 中间件机制
-  - name: keywords
-    content: Koa 中间件机制
 ---
-# Koa 中间件机制
+
 ## 中间件原理(洋葱模型)
 >本质上是：函数压栈和出栈。
 ```js

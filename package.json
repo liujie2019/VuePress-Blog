@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "docs:build": "vuepress build docs",
+    "getname": "node utils/getFilenames.js"
   },
   "repository": "git@github.com:liujie2019/VuePress-Blog.git",
   "author": "liujie",
   "license": "MIT",
   "devDependencies": {
     "@vuepress/plugin-back-to-top": "^1.0.0-rc.1",
+    "@vuepress/plugin-google-analytics": "^1.0.0-rc.1",
     "@vuepress/plugin-pwa": "^1.0.0-rc.1",
     "vuepress": "^1.1.0"
   },

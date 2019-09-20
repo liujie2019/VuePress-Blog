@@ -1,16 +1,12 @@
-const sidebar = require('./conf/sidebarConf');
-const nav = require('./conf/navConf');
-const pluginConf = require('./conf/pluginConf');
-const headConf = require('./conf/headConf');
+const sidebar = require('../../conf/sidebarConf/index');
+const nav = require('../../conf/navConf');
+const pluginConf = require('../../conf/pluginConf');
+const headConf = require('../../conf/headConf');
+// const {sidebar, nav} = require('./builds');
 module.exports = {
     title: 'VuePress Blog',
     description: '生命的道路上永远没有捷径可言，只有脚踏实地走下去',
     // theme: 'awesome',
-    // locales: {
-    //     '/': {
-    //         lang: 'zh-CN'
-    //     }
-    // },
     head: headConf,
     markdown: {
         lineNumbers: true // 代码块显示行号
@@ -21,7 +17,7 @@ module.exports = {
         sidebarDepth: 2, // 将同时提取markdown中h2 和 h3 标题，显示在侧边栏上。
         searchMaxSuggestions: 10,
         lastUpdated: '上次更新', // 文档更新时间：每个文件git最后提交的时间
-        // 假定 GitHub。也可以是一个完整的 GitLab URL。
+        // 假定GitHub。也可以是一个完整的 GitLab URL。
         repo: 'liujie2019/VuePress-Blog',
         // 自定义项目仓库链接文字
         // 默认根据 `themeConfig.repo` 中的 URL 来自动匹配是 "GitHub"/"GitLab"/"Bitbucket" 中的哪个，如果不设置时是 "Source"。
@@ -37,12 +33,6 @@ module.exports = {
         editLinks: true,
         // 自定义编辑链接的文本。默认是 "Edit this page"
         editLinkText: '查看原文 | 在GitHub上编辑此页'
-        // serviceWorker: {
-        //     updatePopup: {
-        //         message: "发现新内容可用",
-        //         buttonText: "刷新"
-        //     }
-        // }
     },
     plugins: pluginConf
 }

@@ -1,14 +1,7 @@
 ---
 title: Koa 基础入门
-lang: zh
-meta:
-  - name: description
-    content: Koa 基础
-  - name: keywords
-    content: Koa 基础
 ---
 
-# Koa 基础入门
 ## 基本用法
 >Koa 必须使用7.6以上版本的Node。如果你的版本低于这个要求，就要先升级 Node。
 ### 搭建开发环境
