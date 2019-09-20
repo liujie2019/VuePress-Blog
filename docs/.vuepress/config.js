@@ -38,13 +38,13 @@ module.exports = {
         // 默认为 false，设置为 true 来启用，当前 markdown 的 github 代码链接
         editLinks: true,
         // 自定义编辑链接的文本。默认是 "Edit this page"
-        editLinkText: '查看原文 | 编辑文档',
-        serviceWorker: {
-            updatePopup: {
-                message: "发现新内容可用",
-                buttonText: "刷新"
-            }
-        }
+        editLinkText: '查看原文 | 在GitHub上编辑此页'
+        // serviceWorker: {
+        //     updatePopup: {
+        //         message: "发现新内容可用",
+        //         buttonText: "刷新"
+        //     }
+        // }
     },
     plugins: pluginConf
 }
