@@ -2,7 +2,7 @@
 home: true
 lang: zh-CN
 heroText: A  Personal Blog
-heroImage: /background.jpg
+heroImage: /background.png
 actionText: 快速上手 →
 actionLink: /zh/guide/
 features:

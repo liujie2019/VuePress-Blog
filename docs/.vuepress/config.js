@@ -1,6 +1,7 @@
 const sidebar = require('./conf/sidebarConf');
 const nav = require('./conf/navConf');
-const pluginConf = require('./conf/pluginConf.js');
+const pluginConf = require('./conf/pluginConf');
+const headConf = require('./conf/headConf');
 module.exports = {
     title: 'VuePress Blog',
     description: '生命的道路上永远没有捷径可言，只有脚踏实地走下去',
@@ -10,10 +11,7 @@ module.exports = {
     //         lang: 'zh-CN'
     //     }
     // },
-    head: [
-        ['link', { rel: 'icon', href: '/favicon.ico' }], // 增加一个自定义的 favicon(网页标签的图标)
-        ['link', { rel: 'manifest', href: '/manifest.json' }]
-    ],
+    head: headConf,
     markdown: {
         lineNumbers: true // 代码块显示行号
     },
