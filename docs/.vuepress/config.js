@@ -7,6 +7,11 @@ module.exports = {
     title: 'VuePress Blog',
     description: '生命的道路上永远没有捷径可言，只有脚踏实地走下去',
     // theme: 'awesome',
+    locales: {
+        '/': {
+          lang: 'zh-CN',
+        }
+    },
     head: headConf,
     markdown: {
         lineNumbers: true // 代码块显示行号
