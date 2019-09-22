@@ -31,11 +31,11 @@ const nginx = require('./backend/nginx/index.js');
 // const vscode = require('./tools/vscode/index.js');
 
 // 更多
+const git = require('./more/git/index.js');
+const linux = require('./more/linux/index.js');
 // const algorithm = require('./more/algorithm/index.js');
 // const interview = require('./more/interview/index.js');
-// const hodgepodge = require('./more/hodgepodge/index.js');
-// const bookmark = require('./more/bookmark/index.js');
-// const clean = require('./more/clean/index.js');
+
 
 /**
  * 侧边栏的配置
@@ -77,12 +77,10 @@ module.exports = {
 //   '/tools/vscode/': vscode,
 
   // 更多 more
+  '/more/git/': git,
+  '/more/linux/': linux
 //   '/more/algorithm/': algorithm,
 //   '/more/interview/': interview,
-//   '/more/hodgepodge/': hodgepodge,
-//   '/more/bookmark/': bookmark,
-//   '/more/clean/': clean,
-  '/about/': about
   // 根目录下的 sidebar, 对于所有未匹配到的都会应用该 sidebar
   // '/': [''] // 此处选择禁用
 };

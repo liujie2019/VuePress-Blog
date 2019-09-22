@@ -19,5 +19,11 @@ module.exports = [
         { text: 'MongoDB', link: '/backend/mongodb/'},
         { text: 'Nginx', link: '/backend/nginx/'},
       ]
+    }, {
+        text: '更多',
+        items: [
+          { text: 'Git', link: '/more/git/'},
+          { text: 'Linux', link: '/more/linux/'}
+        ]
     }, {text: '关于我', link: '/about/'}
 ];
