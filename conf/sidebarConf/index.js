@@ -14,9 +14,11 @@ const about = require('./about/index.js');
 const html = require('./frontend/html/index.js');
 const css = require('./frontend/css/index.js');
 const javascript = require('./frontend/javascript/index.js');
+const es6 = require('./frontend/es6/index.js');
 const webpack = require('./frontend/webpack/index.js');
 const babel = require('./frontend/babel/index.js');
 const vue = require('./frontend/vue/index.js');
+const webpack4 = require('./frontend/webpack4/index.js');
 
 // 后端
 const nodejs = require('./backend/nodejs/index.js');
@@ -60,8 +62,10 @@ module.exports = {
   '/frontend/html/': html,
   '/frontend/css/': css,
   '/frontend/javascript/': javascript,
+  '/frontend/es6/': es6,
   '/frontend/vue/': vue,
   '/frontend/webpack/': webpack,
+  '/frontend/webpack4/': webpack4,
   '/frontend/babel/': babel,
 
   // 后端 backend

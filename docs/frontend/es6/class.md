@@ -1,0 +1,81 @@
+---
+title: Class基础
+---
+JavaScript语言中，生成实例对象的传统方法是通过构造函数。
+```js
+class Point {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  toString() {
+    return '(' + this.x + ', ' + this.y + ')';
+  }
+}
+```
+上面代码定义了一个类Point，可以看到里面有一个constructor方法，这就是**构造函数**，而this关键字则代表实例对象。也就是说，ES5的构造函数Point，对应ES6的Point类的构造方法。
+
+Point类除了构造方法，还定义了一个toString方法。注意，定义类的方法的时候，前面不需要加上function这个关键字，直接把函数定义放进去了就可以了。另外，方法之间不需要逗号分隔，加了会报错。
+
+ES6的类，完全可以看作构造函数的另一种写法。
+
+## 构造函数的prototype属性
+构造函数的prototype属性，在ES6的类上面继续存在。事实上，类的所有方法都定义在类的prototype属性上面。
+```js
+class Point {
+  constructor() {
+    // ...
+  }
+
+  toString() {
+    // ...
+  }
+
+  toValue() {
+    // ...
+  }
+}
+
+// 等同于
+
+Point.prototype = {
+  constructor() {},
+  toString() {},
+  toValue() {},
+};
+```
+## constructor方法
+constructor方法是类的默认方法，**通过new命令生成对象实例时，自动调用该方法**。一个类必须有constructor方法，如果没有显式定义，一个空的constructor方法会被默认添加。
+```js
+class Point {
+}
+
+// 等同于
+class Point {
+  constructor() {}
+}
+```
+上面代码中，定义了一个空的类Point，JavaScript 引擎会自动为它添加一个空的constructor方法。
+
+constructor方法默认返回实例对象（即this），完全可以指定返回另外一个对象。
+```js
+class Foo {
+  constructor() {
+    return Object.create(null);
+  }
+}
+
+new Foo() instanceof Foo
+// false
+```
+上面代码中，constructor函数返回一个全新的对象，结果导致实例对象不是Foo类的实例。
+## 静态方法(不会被实例继承)
+类相当于实例的原型，所有在类中定义的方法，都会被实例继承。**如果在一个方法前，加上static关键字，就表示该方法不会被实例继承，而是直接通过类来调用，这就称为静态方法。**
+
+## 静态属性
+
+## 私有方法和私有属性
+
+## 参考文档
+1. [Class 的基本语法](http://es6.ruanyifeng.com/#docs/class)

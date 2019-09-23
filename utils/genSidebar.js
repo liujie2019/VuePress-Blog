@@ -1,4 +1,4 @@
-const genSidebar = (title, children = [''], collapsable = true, sidebarDepth = 1) => {
+const genSidebar = (title, children = [''], collapsable = true, sidebarDepth = 2) => {
     return {
       title,
       collapsable,

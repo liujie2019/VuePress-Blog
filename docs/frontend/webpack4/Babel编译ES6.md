@@ -1,0 +1,143 @@
+---
+title: 编译ES6和jsx
+---
+
+目前项目中，`js`主要是用`ES6+`编写的。但是，并不是所有浏览器都支持`ES6+`，这就需要对其进行转换，这个转换步骤称为 `transpiling`(转译)。
+Webpack需要借助于`loader`(加载器)进行相应的转换。`babel-loader`就是用于将`ES6+`转译成`ES5`。
+
+一个`webpack loader`作用就是：把输入进去的文件转化成指定的文件格式输出。其中`babel-loader`负责将传入的`es6`文件转化成浏览器可以运行的文件。
+
+## 初始化Babel
+
+* babel-loader: 负责`es6+`语法转化；
+* babel-preset-env: 将`ES6+`转换成`ES5`(注意：`babel-preset-es2015`已经被废弃了)；
+* babel-polyfill: `es6`内置方法和函数转化垫片；
+* babel-plugin-transform-runtime: 避免`polyfill`污染全局变量。
+
+需要注意的是：`babel-loader和babel-polyfill`。前者负责语法转化，比如：箭头函数；后者负责内置方法和函数，比如：`new Set()`。
+
+>下面来安装和配置Babel：
+
+```js
+npm i @babel/core babel-loader @babel/preset-env --save-dev
+```
+在项目根目录新建一个`.babelrc`文件，内容为：
+```js
+{
+  "presets": ["@babel/preset-env"]
+}
+```
+创建一个新的文件`webpack.config.js`，内容为
+```js
+const path = require('path');
+
+module.exports = {
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  }
+
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      }
+    ]
+  }
+};
+```
+上述`webpack`的配置很简单，所有以`.js`结尾的文件都会用`babel-loader`把`ES6`编译转化成`ES5`的文件。同时指定了入口文件的路径为`src/index.js`，输出为`dist/bundle.js`。
+
+## babel-polyfill引入
+>`node`中引入：
+```js
+require("babel-polyfill");
+```
+如果在应用入口使用`ES6`的`import`语法，需要在入口顶部通过 `import`将`polyfill`引入，以确保它能够最先加载：
+```js
+import "babel-polyfill";
+```
+在`webpack.config.js`中，将`babel-polyfill`加到entry 数组中：
+```js
+module.exports = {
+  entry: ['babel-polyfill', './src/index.js']
+};
+```
+
+## 在npm scripts中使用babel-loader(不推荐)
+`--module-bind`参数允许我们在命令行中指定加载器。该参数从`webpack3`开始就有了。
+
+如果希望在没有配置文件的情况下使用`babel-loader`，需要在 `package.json`中配置`npm scripts`，如下所示：
+```js
+"scripts": {
+    "dev": "webpack --mode development --module-bind js=babel-loader",
+    "build": "webpack --mode production --module-bind js=babel-loader"
+}
+```
+运行`npm run build`构建项目。
+
+## 转化generator
+![1701917709ba87da89ec95299b857c5e.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p1224)
+## 编译JSX
+>1. 安装`React`：
+```js
+npm i react react-dom --save-dev
+```
+>2. 安装`babel-preset-react`：
+```js
+npm i @babel/preset-react --save-dev
+```
+>3. 在`.babelrc`中配置预设：
+```js
+{
+  "presets": [
+    "@babel/preset-env",
+    "@babel/preset-react"
+   ]
+}
+```
+这样一来，我们可以配置`babel-loader`来读取`.jsx`文件。具体配置如下：
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
+        }
+      }
+    ]
+  }
+};
+```
+在`./src/App.js`中创建一个测试的`React`组件：
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+const App = () => {
+  return (
+    <div>
+      <p>React Test!</p>
+    </div>
+  );
+};
+export default App;
+```
+接下来在`./src/index.js`中导入组件：
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+ReactDOM.render(
+    <App />,
+    document.getElementById("app")
+);
+```
+然后再次运行构建`npm run build`。

@@ -6,9 +6,11 @@ module.exports = [
         { text: 'HTML', link: '/frontend/html/'},
         { text: 'CSS', link: '/frontend/css/'},
         { text: 'JS', link: '/frontend/javascript/'},
+        { text: 'ES6', link: '/frontend/es6/'},
         { text: 'Vue', link: '/frontend/vue/'},
         { text: 'Babel', link: '/frontend/babel/'},
-        { text: 'Webpack', link: '/frontend/webpack/'}
+        { text: 'Webpack', link: '/frontend/webpack/'},
+        { text: 'Webpack4配置实战', link: '/frontend/webpack4/'}
       ]
     }, {
       text: '服务端积累',
