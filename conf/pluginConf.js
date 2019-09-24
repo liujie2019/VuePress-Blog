@@ -1,5 +1,15 @@
 const secretKeyConf = require('../conf/secretKeyConf');
 module.exports = [
+    [
+        '@vuepress/last-updated',
+        {
+            transformer: (timestamp, lang) => {
+                const moment = require('moment');
+                moment.locale(lang);
+                return moment(timestamp).format('YYYY-MM-DD HH:mm:ss');
+            }
+        }
+    ],
     ['@vuepress/pwa', {
         serviceWorker: true,
         updatePopup: {
