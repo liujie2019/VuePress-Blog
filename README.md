@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/liujie2019/VuePress-Blog.svg?branch=master)](https://travis-ci.org/liujie2019/VuePress-Blog)
+[![Build Status](https://travis-ci.org/liujie2019/VuePress-Blog.svg?branch=master)](https://travis-ci.org/liujie2019/VuePress-Blog)[![GitHub license](https://img.shields.io/github/license/liujie2019/VuePress-Blog)](https://github.com/liujie2019/VuePress-Blog/blob/master/LICENSE)
 
 ## 介绍
 一个基于VuePress搭建的文档笔记。

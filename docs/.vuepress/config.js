@@ -16,7 +16,7 @@ module.exports = {
         lineNumbers: true // 代码块显示行号
     },
     themeConfig: {
-        lastUpdated: 'Last Updated', // 文档更新时间：每个文件git最后提交的时间
+        lastUpdated: '上次更新', // 文档更新时间：每个文件git最后提交的时间
         nav,
         sidebar,
         sidebarDepth: 2, // 将同时提取markdown中h2 和 h3 标题，显示在侧边栏上。

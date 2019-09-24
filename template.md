@@ -14,6 +14,17 @@
 ---
 title: 首页
 ---
+::: tip
+This is a tip
+:::
+
+::: warning
+This is a warning
+:::
+
+::: danger
+This is a dangerous warning
+:::
 ## 介绍
 📝📝📝主要是一些ES6的知识点汇总。
 
