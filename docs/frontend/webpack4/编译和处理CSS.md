@@ -13,7 +13,7 @@ title: 编译和处理CSS
 npm install css-loader style-loader file-loader -D
 ```
 
-## CSS通过<link>标签引入
+## CSS通过`<link>`标签引入
 通过`link`标签引用`css`文件，这需要借助`file-loader`来将`css`处理为文件。具体配置如下：
 ```js
 const path = require('path');
@@ -62,7 +62,7 @@ document.querySelector('#btn').addEventListener('click', () => {
 ![23ad09ee062589d9a9ba24c147d6ba1a.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p550)
 >从上图可以看出，对应的css被插入了相应的`link`标签中。
 
-## CSS放在<style>标签里
+## CSS放在`<style>`标签里
 通常来说，`css`放在`style`标签里可以减少网络请求次数，缩短响应时间。需要注意的是，在老式`IE`浏览器中，对`style`标签的数量是有要求的。具体配置如下：
 ```js
 const path = require('path');

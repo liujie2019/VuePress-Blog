@@ -2,7 +2,6 @@ const sidebar = require('../../conf/sidebarConf/index');
 const nav = require('../../conf/navConf');
 const pluginConf = require('../../conf/pluginConf');
 const headConf = require('../../conf/headConf');
-// const {sidebar, nav} = require('./builds');
 module.exports = {
     title: 'VuePress Blog',
     description: '生命的道路上永远没有捷径可言，只有脚踏实地走下去',
@@ -17,11 +16,11 @@ module.exports = {
         lineNumbers: true // 代码块显示行号
     },
     themeConfig: {
+        lastUpdated: 'Last Updated', // 文档更新时间：每个文件git最后提交的时间
         nav,
         sidebar,
         sidebarDepth: 2, // 将同时提取markdown中h2 和 h3 标题，显示在侧边栏上。
         searchMaxSuggestions: 10,
-        lastUpdated: '上次更新', // 文档更新时间：每个文件git最后提交的时间
         // 假定GitHub。也可以是一个完整的 GitLab URL。
         repo: 'liujie2019/VuePress-Blog',
         // 自定义项目仓库链接文字
