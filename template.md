@@ -1,5 +1,6 @@
 <img :src="$withBase('/foo.png')" alt="">
 
+<Valine></Valine>
 举个🌰：
 来看个🌰：
 

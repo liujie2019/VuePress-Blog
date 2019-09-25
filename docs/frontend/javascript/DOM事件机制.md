@@ -285,5 +285,8 @@ outer click 1
 当我们点击粉色div的时候，会依次输出:
 ![5b7861ef913fd9af5fcddfba696170be.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p1175)
 从输出中我们可以看到，event.target指向引起触发事件的元素，而event.currentTarget则是事件绑定的元素，**只有被点击的那个目标元素的event.target才会等于event.currentTarget**。也就是说，event.currentTarget始终是监听事件者，而event.target是事件的真正发出者。
+
 ## 参考文档
 1. [DOM事件机制 ](https://github.com/ljianshu/Blog/issues/44)
+
+<Valine></Valine>

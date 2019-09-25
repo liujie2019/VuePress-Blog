@@ -56,3 +56,5 @@ lang: zh
 ## 参考文档
 1. [深度解析原型中的各个难点](https://github.com/KieSun/Dream/issues/2)
 2. [JavaScript深入之从原型到原型链](https://github.com/mqyqingfeng/Blog/issues/2)
+
+<Valine></Valine>

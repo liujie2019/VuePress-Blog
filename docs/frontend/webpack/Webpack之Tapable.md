@@ -1013,6 +1013,8 @@ hook.callAsync('tom', () => {
 ```
 ## 参考文档
 1. [webpack4.0源码分析之Tapable](https://juejin.im/post/5abf33f16fb9a028e46ec352)
-2. [webpack插件机制之Tapable](https://juejin.im/post/5abf33f16fb9a028e46ec352)
+2. [webpack插件机制之Tapable](https://juejin.im/post/5c5d96a1e51d457fc0574181#heading-6)
 3. [webpack系列之二Tapable](https://juejin.im/post/5c25f920e51d45593b4bc719)
 4. [Webpack4.0 source code analysis of Tapable](http://www.programmersought.com/article/1459649892/)
+
+<Valine></Valine>

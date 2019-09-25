@@ -1,8 +1,15 @@
 [![Build Status](https://travis-ci.org/liujie2019/VuePress-Blog.svg?branch=master)](https://travis-ci.org/liujie2019/VuePress-Blog)[![GitHub license](https://img.shields.io/github/license/liujie2019/VuePress-Blog)](https://github.com/liujie2019/VuePress-Blog/blob/master/LICENSE)
 
-## 介绍
-一个基于VuePress搭建的文档笔记。
+## 说明介绍
+一个基于VuePress搭建的博客文档。目前计划写3个系列：
 
+* 重学JS(📝进行中)
+* ES6进阶(📝进行中)
+* Webpack(📝进行中)
+* Vue(计划中)
+* React(计划中)
+
+写作不易，感觉写的不错的可以给个Star⭐。如果有疑问或者发现错误，可以提issues。
 ## 如何使用
 ```bash
 # 1. clone该项目
@@ -14,5 +21,3 @@ yarn install
 # 3. 本地运行
 yarn run docs:dev
 ```
-## 说明
-平时学习和工作的中积累。
