@@ -43,6 +43,11 @@ yarn global add nrm
 ➜  ~ nrm --version
 1.2.1
 ```
+### 查看当前使用的源
+```bash
+➜  ~ nrm current
+taobao
+```
 ### 列出所有可选择的源
 ```bash
 ➜  ~ nrm ls

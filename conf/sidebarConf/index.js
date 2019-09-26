@@ -14,6 +14,7 @@ const about = require('./about/index.js');
 const html = require('./frontend/html/index.js');
 const css = require('./frontend/css/index.js');
 const javascript = require('./frontend/javascript/index.js');
+const jsTopic = require('./frontend/jsTopic/index.js');
 const es6 = require('./frontend/es6/index.js');
 const webpack = require('./frontend/webpack/index.js');
 const babel = require('./frontend/babel/index.js');
@@ -62,6 +63,7 @@ module.exports = {
   '/frontend/html/': html,
   '/frontend/css/': css,
   '/frontend/javascript/': javascript,
+  '/frontend/jsTopic/': jsTopic,
   '/frontend/es6/': es6,
   '/frontend/vue/': vue,
   '/frontend/webpack/': webpack,

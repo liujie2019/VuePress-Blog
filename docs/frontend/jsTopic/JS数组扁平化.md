@@ -1,0 +1,73 @@
+---
+title: JS数组扁平化
+---
+Array.prototype.flat()方法会按照一个可指定的深度递归遍历数组，并将所有元素与遍历到的子数组中的元素合并为一个新数组返回。
+## flat实现
+### 递归实现
+```js
+function myFlat(arr) {
+    const _result = [];
+    let fn = arr => {
+        for (let i = 0; i < arr.length; i++) {
+            let item = arr[i];
+            if (Array.isArray(item)) {
+                fn(item);
+            }
+            else {
+                _result.push(item);
+            }
+        }
+    }
+    fn(arr);
+    return _result;
+}
+```
+### 基于reduce
+```js
+const arr = [1, [2, [3, [4, 5]]], 6];
+
+// [].concat(1) => [1]
+function myFlat(arr) {
+    // 如果传入的参数不是数组，直接返回
+    if (!Array.isArray(arr)) return arr;
+    return arr.reduce((prev, val) => {
+        console.log(val);
+        return prev.concat(myFlat(val));
+    }, []);
+}
+
+console.log(myFlat(arr)); // [ 1, 2, 3, 4, 5, 6 ]
+```
+```js
+// console.log(val);的值
+1
+[ 2, [ 3, [ 4, 5 ] ] ]
+2
+[ 3, [ 4, 5 ] ]
+3
+[ 4, 5 ]
+4
+5
+6
+```
+### 扩展运算符
+```js
+const arr = [1, [2, [3, [4, 5, 6]]], 7];
+
+function myFlat(arr) {
+    while (arr.some(Array.isArray)) {
+        console.log(arr);
+        arr = [].concat(...arr);
+    }
+    return arr;
+}
+console.log(myFlat(arr)); // [ 1, 2, 3, 4, 5, 6 ]
+```
+```js
+[ 1, [ 2, [ 3, [Array] ] ], 7 ]
+[ 1, 2, [ 3, [ 4, 5, 6 ] ], 7 ]
+[ 1, 2, 3, [ 4, 5, 6 ], 7 ]
+```
+## 参考文档
+
+1. [JS数组扁平化\(flat\)方法总结](https://juejin.im/post/5d0d9c49e51d4577781173ad)

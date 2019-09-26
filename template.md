@@ -26,6 +26,18 @@ This is a warning
 ::: danger
 This is a dangerous warning
 :::
+
+:tada: :100:
+``` js {1}
+export default {
+  data () {
+    return {
+      msg: 'Highlighted!'
+    }
+  }
+}
+```
+<<< @/utils/genSidebar.js
 ## 介绍
 📝📝📝主要是一些ES6的知识点汇总。
 

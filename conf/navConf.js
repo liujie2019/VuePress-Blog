@@ -5,7 +5,8 @@ module.exports = [
       items: [
         { text: 'HTML', link: '/frontend/html/'},
         { text: 'CSS', link: '/frontend/css/'},
-        { text: 'JS', link: '/frontend/javascript/'},
+        { text: 'JS基础', link: '/frontend/javascript/'},
+        { text: 'JS专题', link: '/frontend/jsTopic/'},
         { text: 'ES6', link: '/frontend/es6/'},
         { text: 'Vue', link: '/frontend/vue/'},
         { text: 'Babel', link: '/frontend/babel/'},
