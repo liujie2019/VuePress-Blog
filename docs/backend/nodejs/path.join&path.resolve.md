@@ -57,3 +57,6 @@ console.log(path6); // /Demo/static/test.js
 
 * join是把各个path片段简单连接在一起。
 * resolve是解析路径并返回，直到
+
+## 参考文档
+1. [作为一个前端工程师也要掌握的几种文件路径知识](https://mp.weixin.qq.com/s/CPYa7YjQDJGYWzKwTox5Rg)
