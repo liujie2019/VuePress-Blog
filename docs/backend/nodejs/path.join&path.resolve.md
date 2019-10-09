@@ -1,7 +1,11 @@
 ---
-title: path.join与path.resolve区别
+title: 路径相关总结
 ---
-## path.join
+## 路径分类
+node中的路径大致分5类，dirname，filename，process.cwd()，./，../，其中dirname，filename，process.cwd()为绝对路径。
+
+## path.join与path.resolve区别
+### path.join
 path.join()方法使用**平台特定的分隔符**作为定界符将所有给定的path片段连接在一起，然后规范化生成的路径。
 
 零长度的path片段会被忽略。 如果连接的路径字符串是零长度的字符串，则返回 '.'，表示当前工作目录。
@@ -12,7 +16,7 @@ path.join('/foo', 'bar', 'baz/asdf', 'quux', '..');
 path.join('foo', {}, 'bar');
 // 抛出 'TypeError: Path must be a string. Received {}'
 ```
-## path.resolve()
+### path.resolve()
 >path.resolve()方法将路径或路径片段的序列解析为绝对路径。除了根目录，该方法的返回值都不带尾部的斜杠。
 
 给定的路径序列**从右到左进行处理**，每个后续的path前置，**直到构造出一个绝对路径**。 例如，给定的路径片段序列：/foo、 /bar、 baz，调用 path.resolve('/foo', '/bar', 'baz') 将返回 /bar/baz。
