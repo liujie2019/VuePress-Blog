@@ -1,7 +1,10 @@
 ---
 title: Promise
 ---
-[TOC]
+::: tip
+写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
+:::
+
 ## Promise是什么
 `Promise`对象用于异步计算，表示一个现在、将来或永不可能可用的值。
 

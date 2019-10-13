@@ -1,6 +1,10 @@
 ---
 title: Async/Await
 ---
+::: tip
+写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
+:::
+
 `Async/Await`是`ECMAScript`新引入的语法，能够极大地简化异步程序的编写，本文详细介绍了`Async/Await`的用法以及与传统方式的对比，通过样例体现了`Async/Await`的优势。
 
 `async`函数是`Generator`函数的语法糖。使用关键字`async`来表示，在函数内部使用`await`来表示异步。相较于`Generator`，`async`函数的改进在于下面几点：

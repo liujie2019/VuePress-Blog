@@ -1,6 +1,10 @@
 ---
-title: 生成器(Generator)
+title: Generator(生成器)
 ---
+::: tip
+写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
+:::
+
 ## 基本概念
 Generator函数是ES6提供的一种异步编程解决方案，语法行为与传统函数完全不同。
 ```js
@@ -43,7 +47,8 @@ hw.next()
 
 >总结一下：调用 Generator 函数，返回一个遍历器对象，代表 Generator 函数的内部指针。以后，每次调用遍历器对象的next方法，就会返回一个有着value和done两个属性的对象。value属性表示当前的内部状态的值，是yield表达式后面那个表达式的值；done属性是一个布尔值，表示是否遍历结束。
 
+## Generator函数的异步应用
+### co模块
 
 ## 参考文档
-
 1. [Generator 函数的语法](http://es6.ruanyifeng.com/#docs/generator)

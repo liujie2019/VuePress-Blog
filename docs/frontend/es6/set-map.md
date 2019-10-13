@@ -54,7 +54,7 @@ green green Set { 'red', 'blue', 'green' }
  */
 ```
 ## 小技巧
-####`Array.from`方法可以将`Set`结构转为数组
+### Array.from方法可以将Set结构转为数组
 ```js
 // 可以用来实现数组去重
 function dedupe(arr) {
