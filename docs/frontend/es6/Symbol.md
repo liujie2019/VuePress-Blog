@@ -4,7 +4,8 @@ title: Symbol
 ::: tip
 写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
 :::
-Symbol 基本数据类型，独一无二(永远不相等)
+
+Symbol是基本数据类型，独一无二(永远不相等)
 ```js
 let s1 = Symbol(); // 可以接收一个标识参数
 let s2 = Symbol();
@@ -20,12 +21,12 @@ console.log(s3 === s4); // false
 ```js
 let obj = {
     name: 'lisi',
-    [s2]: 1 // 如果对象的属性为Symbol类型的话，该属性不可枚举
+    [s2]: 1 // 对象的属性为Symbol类型的话，该属性不可枚举
 }
 console.log(obj); // { name: 'lisi', [Symbol()]: 1 }
-console.log(obj[s2]);
-console.log(s1 === s2); // false
+console.log(obj[s2]); // 1
 ```
+## Symbol类型的属性不可枚举
 ```js
 for (let key in obj) {
     console.log(obj[key]); // 'name'
@@ -36,24 +37,132 @@ console.log(Object.getOwnPropertySymbols(obj)); // [ Symbol() ]
 ```
 ## Symbol.for
 ```js
-// 没有这个变量，就声明一个
-let s5 = Symbol.for('lisi');
-// 如果已经存在了，可以直接获取对应的symbol
-// 所以s5和s6是相等的
-let s6 = Symbol.for('lisi');
+let s5 = Symbol.for('lisi'); // 没有这个变量，就声明一个
+let s6 = Symbol.for('lisi'); // 如果已经存在了，可以直接获取对应的symbol
 
 console.log(Symbol.keyFor(s5)); // lisi
+// 所以s5和s6是相等的
 console.log(s5 === s6); // true
 ```
 ## Symbol.iterator
 Symbol内置对象 Symbol.iterator 实现对象的遍历
-实现元编程 可以对原生js的操作进行修改
+
+## 改写对象原生的instanceof方法
+实现元编程 可以对原生js的操作进行修改。
 ```js
-let instance = {
+let obj = {
     // 改写对象的instanceof方法
     [Symbol.hasInstance](value) {
+        console.log(value); // { a: 1 }
+        // 只要value中存在a属性就返回true
         return 'a' in value;
     }
 };
-console.log({a: 1} instanceof instance); // true
+console.log({a: 1} instanceof obj); // true
+```
+## Symbol.isConcatSpreadable
+`Symbol.isConcatSpreadable`：在使用展开运算符的时候是否把数组展开。
+```js
+let arr = [1, 2, 3];
+// 设置在使用concat方法进行数组拼接时，不展开arr
+arr[Symbol.isConcatSpreadable] = false;
+
+console.log([].concat(arr, [4, 5, 6]));
+/*
+[ [ 1, 2, 3, [Symbol(Symbol.isConcatSpreadable)]: false ],
+  4,
+  5,
+  6 ]
+*/
+```
+## Symbol.match
+```js
+// match split search
+let obj = {
+    [Symbol.match](value) {
+        // value的长度为2则返回true
+        return value.length === 2;
+    }
+}
+console.log('12'.match(obj)); // true
+console.log('123'.match(obj)); // false
+```
+## Symbol.species(衍生对象)
+```js
+// species 衍生对象
+class MyArray extends Array {
+    constructor(...args) { // 先将类数组转为数组[1, 2, 3]
+        // 调用父类的构造函数
+        super(...args); // 再展开
+    }
+    // 强制修改一下
+    // 使得arr2 instanceof MyArray为false
+    // arr2 instanceof Array为true
+    // 静态属性
+    // 静态即属于类自己的
+    static get [Symbol.species]() {
+        return Array;
+    }
+}
+let arr = new MyArray(1, 2, 3);
+console.log(arr); // MyArray [ 1, 2, 3 ]
+let arr2 = arr.map(item => item *= 2); // arr2是arr的衍生对象
+console.log(arr2 instanceof MyArray); // false
+console.log(arr2 instanceof Array); // true
+```
+## Symbol.toPrimitive
+```js
+let obj = {
+    [Symbol.toPrimitive](type) {
+        console.log(type); // number
+        return 11;
+    }
+}
+
+console.log(obj++); // 11
+```
+```js
+let obj = {
+    [Symbol.toPrimitive](type) {
+        console.log(type); // default
+        return 11;
+    }
+}
+
+console.log(obj + '22'); // 1122
+```
+## Symbol.toStringTag
+```js
+let obj = {
+    [Symbol.toStringTag]: 'test'
+}
+console.log(Object.prototype.toString.call(obj)); // [object test]
+```
+## Symbol.unscopables
+```js
+with({name: 1}){
+    // with内部会以{name: 1}对象为this指向来取值
+    console.log(name); // 1
+}
+```
+```js
+let arr = [];
+console.log(arr[Symbol.unscopables]);
+/*
+{ copyWithin: true,
+  entries: true,
+  fill: true,
+  find: true,
+  findIndex: true,
+  includes: true,
+  keys: true }
+  这些方法默认取不到，这些方法不在数组的作用域内
+*/
+let arr = [];
+with(arr){
+    // with内部会以arr为this指向来取值
+    console.log(forEach); // [Function: forEach]
+    console.log(findIndex); // ReferenceError: findIndex is not defined
+}
+// 模板引擎(ejs这些)就是用with语法实现的
 ```

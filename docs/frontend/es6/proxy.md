@@ -19,7 +19,112 @@ const proxy = new Proxy(target, handler);
 ```
 Proxy对象的所有用法，都是上面这种形式，不同的只是`handler`参数的写法。其中，new Proxy()表示生成一个Proxy实例，**target参数表示所要拦截的目标对象**，handler参数也是一个对象，用来定制拦截行为。
 
-## demo
+## Proxy拦截操作
+### get(target, propKey, receiver(可选参数))
+get方法用于：拦截对象某个属性的读取操作，可以接受三个参数，依次为目标对象、属性名和proxy实例本身（严格地说，是操作行为所针对的对象），其中最后一个参数可选。
+
+```js
+const handler = {
+    // 对设置属性进行拦截
+    set: function(target, key, value, receiver) {
+        if (key === 'name') {
+            target[key] = receiver;
+        } else {
+            target[key] = value;
+        }
+    }
+}
+
+const proxy = new Proxy({}, handler);
+const obj = {};
+Object.setPrototypeOf(obj, proxy);
+
+obj.name = 'lisi';
+obj.age = 12;
+console.log(obj.name === obj); // true
+console.log(obj.age); // 12
+```
+### set(target, propKey, value, receiver)
+```js
+const handler = {
+    // 对设置属性进行拦截
+    set: function(target, key, value, receiver) {
+        if (key === 'name') {
+            target[key] = receiver;
+        } else {
+            target[key] = value;
+        }
+    }
+}
+
+const proxy = new Proxy({}, handler);
+const obj = {};
+Object.setPrototypeOf(obj, proxy);
+
+obj.name = 'lisi';
+obj.age = 12;
+console.log(obj.name === obj); // true
+console.log(obj.age); // 12
+```
+### apply
+apply方法拦截函数的调用、call和apply操作。
+
+apply方法可以接受三个参数，分别是目标对象、目标对象的上下文对象（this）和目标对象的参数数组。
+```js
+const handler = {
+    apply(target, ctx, args) {
+        console.log(target);
+        console.log(ctx);
+        console.log(args); // [1, 2]
+        return Reflect.apply(...arguments) * 3;
+    }
+};
+
+function sum(left, right) {
+    return left + right;
+}
+
+let proxy = new Proxy(sum, handler);
+// 执行proxy函数（直接调用或call和apply调用），就会被apply方法拦截
+console.log(proxy(1, 2)); // 9
+console.log(proxy.call(null, 2, 3)); // 15
+console.log(proxy.apply(null, [3, 4])); // 21
+```
+### has
+has方法用来拦截HasProperty操作，即判断对象是否具有某个属性时，这个方法会生效。典型的操作就是in运算符。
+
+has方法可以接受两个参数，分别是目标对象、需查询的属性名。
+```js
+const handler = {
+    has(target, key) {
+        // 隐藏私有属性
+        if (key[0] === '_') {
+            return false;
+        }
+        return key in target;
+    }
+};
+const proxy = new Proxy({name: 'lisi', _age: 18}, handler);
+console.log('_age' in proxy); // false
+console.log('name' in proxy); // true
+```
+### construct
+construct方法用于拦截new命令，下面是拦截对象的写法。
+```js
+
+```
+### isExtensible
+Object.isExtensible() 方法判断一个对象是否是可扩展的（是否可以在它上面添加新的属性）。
+```js
+const obj = {name: 'lisi'};
+
+console.log(Object.isExtensible(obj)); // true
+// 设置obj不可扩展
+Object.preventExtensions(obj);
+console.log(Object.isExtensible(obj)); // false
+```
+
+## 应用
 ### demo1
 ```js
 let obj = {
@@ -79,4 +184,5 @@ safetyProxy.name = 'lisi';
 ```
 
 ## 参考文档
-1. [ES6 系列之 defineProperty 与 proxy](https://github.com/mqyqingfeng/Blog/issues/107)
+1. [Proxy](http://es6.ruanyifeng.com/#docs/proxy)
+2. [ES6 系列之 defineProperty 与 proxy](https://github.com/mqyqingfeng/Blog/issues/107)

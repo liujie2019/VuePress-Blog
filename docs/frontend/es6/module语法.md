@@ -1,0 +1,256 @@
+---
+title: module语法
+---
+[TOC]
+
+在`ES6`之前，社区制定了一些模块加载方案，最主要的有`CommonJS`和`AMD`两种。前者用于服务器，后者用于浏览器。`ES6`在语言标准的层面上，实现了模块功能，而且实现得相当简单，完全可以取代`CommonJS和AMD`规范，成为浏览器和服务器通用的模块解决方案。
+
+`ES6`模块的设计思想是尽量的静态化，使得**编译时**就能确定模块的依赖关系，以及输入和输出的变量。`CommonJS和AMD`模块，都只能在**运行时**确定这些东西。比如，`CommonJS`模块就是对象，输入时必须查找对象属性。
+## CommonJS(运行时加载)
+CommonJS模块:
+```js
+let { stat, exists, readFile } = require('fs');
+
+// 等同于
+let _fs = require('fs');
+let stat = _fs.stat;
+let exists = _fs.exists;
+let readfile = _fs.readfile;
+```
+上面代码的实质是整体加载`fs`模块（即加载`fs`的所有方法），生成一个对象`_fs`，然后再从这个对象上面读取`3`个方法。这种加载称为“**运行时加载**”，因为**只有运行时才能得到这个对象**，导致完全没办法在**编译时**做“静态优化”。
+## ES6模块化(编译时加载)
+`ES6`模块不是对象，而是通过`export`命令显式指定输出的代码，再通过`import`命令输入。
+>`ES6`模块：
+```js
+import { stat, exists, readFile } from 'fs';
+```
+上面代码的实质是从`fs`模块加载`3`个方法，其他方法不加载。这种加载称为“**编译时加载**”或者**静态加载**，即`ES6`可以在编译时就完成模块加载，效率要比`CommonJS`模块的加载方式高。
+
+>特别说明：`ES6`的模块自动采用严格模式，不管你有没有在模块头部加上`"use strict";`。
+
+## export命令
+`ES6`模块功能主要由两个命令构成：`export和import`。`export`命令用于规定模块的对外接口，`import`命令用于输入其他模块提供的功能。
+
+```js
+// 写法一
+export var m = 1;
+
+// 写法二
+var m = 1;
+export {m};
+
+// 写法三
+var n = 1;
+// 导出重命名
+export {n as m};
+```
+上面三种写法都是正确的，规定了对外的接口m。其他脚本可以通过这个接口，取到值1。它们的实质是，在接口名与模块内部变量之间，建立了一一对应的关系。
+### export的值是动态绑定的
+export语句输出的接口，与其对应的值是动态绑定关系，即通过该接口，可以取到模块内部实时的值。
+```js
+export let foo = 'bar';
+setTimeout(() => foo = 'baz', 500);
+```
+```js
+// main.js
+import {foo} from './test2';
+
+console.log(foo);
+setTimeout(() => console.log(foo), 1000);
+```
+执行：
+```js
+node -r @babel/register main.js
+```
+上面代码输出变量foo，值为bar，500 毫秒之后变成baz。
+![6bb1ada3bd3564bdff3c0532e6324fb3.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p673)
+这一点与CommonJS规范完全不同。CommonJS 模块输出的是值的缓存，不存在动态更新。
+## import 命令
+```js
+import { surname } from './profile.js';
+// 为输入的变量重新取一个名字
+import { lastName as surname } from './profile.js';
+```
+## 模块的整体加载
+用星号`*`指定一个对象，所有输出值都加载在这个对象上面。
+```js
+// circle.js
+export function area(radius) {
+  return Math.PI * radius * radius;
+}
+
+export function circumference(radius) {
+  return 2 * Math.PI * radius;
+}
+```
+加载上述模块：
+```js
+// main.js
+// 逐一指定要加载的方法
+import { area, circumference } from './circle';
+
+console.log('圆面积：' + area(4));
+console.log('圆周长：' + circumference(14));
+```
+上面写法是逐一指定要加载的方法，整体加载的写法如下：
+```js
+import * as circle from './circle';
+
+console.log('圆面积：' + circle.area(4));
+console.log('圆周长：' + circle.circumference(14));
+```
+## export default命令
+
+>需要注意：`export default`命令用于指定模块的默认输出。显然，一个模块只能有一个默认输出，因此，`export default`命令只能使用一次。所以，import命令后面才不用加大括号，因为只可能唯一对应`export default`命令。
+
+本质上，`export default`就是输出一个叫做`default`的变量或方法，然后系统允许你为它取任意名字。
+```js
+// modules.js
+function add(x, y) {
+  return x * y;
+}
+export {add as default};
+// 等同于
+// export default add;
+
+// app.js
+import { default as foo } from 'modules';
+// 等同于
+// import foo from 'modules';
+```
+正是因为`export default`命令其实只是输出一个叫做default的变量，所以它后面不能跟变量声明语句。
+```js
+// 正确
+export var a = 1;
+
+// 正确
+var a = 1;
+export default a;
+
+// 错误
+export default var a = 1;
+```
+上面代码中，`export default a`的含义是将变量a的值赋给变量default。所以，最后一种写法会报错。
+
+同样地，因为`export default`命令的本质是将后面的值，赋给default变量，所以可以直接将一个值写在export default之后。
+```js
+// 正确
+export default 42;
+
+// 报错
+export 42;
+```
+上面代码中，后一句报错是因为没有指定对外的接口，而前一句指定对外接口为default。
+
+有了export default命令，输入模块时就非常直观了，以输入 lodash 模块为例。
+```js
+import _ from 'lodash';
+```
+如果想在一条import语句中，同时输入默认方法和其他接口，可以写成下面这样。
+```js
+import _, { each, forEach } from 'lodash';
+```
+### demo
+```js
+// main.js
+import * as Test from './index';
+import {Fn, Add} from './index';
+
+console.log(Fn);
+console.log(Add);
+console.log(Test);
+```
+```js
+// index.js
+// export {default as Add} from './test';
+// export {default as Fn} from './export-default';
+// 等价于下面的写法
+import Add from './test';
+import Fn from './export-default';
+
+export {
+    Add,
+    Fn
+}
+```
+```js
+// test.js
+const add = (x, y) => x + y;
+
+export default add;
+```
+```js
+// export-default.js
+const fn = (x, y) => x * y;
+
+export default fn;
+```
+![572d1694c339448b146fdcda40b88cb4.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p672)
+
+## demo
+```js
+npm install @babel/core @babel/preset-env @babel/register -D
+```
+>babel.config.js
+```js
+module.exports = {
+  presets: [
+    [
+      "@babel/preset-env",
+      {
+        targets: {
+          node: "current" // 针对当前node版本进行编译，删除该行可能导致`npm start`报错
+        }
+      }
+    ]
+  ]
+};
+```
+```js
+"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node -r @babel/register index.js"
+  }
+```
+## export default和export区别
+
+* export与export default均可用于导出常量、函数、文件、模块等；
+* 你可以在其它文件或模块中通过import+(常量 | 函数 | 文件 | 模块)名的方式，将其导入，以便能够对其进行使用；
+* 在一个文件或模块中，export、import可以有多个，export default仅有一个；
+* 通过export方式导出，在导入时要加{ }，export default则不需要。
+```js
+1.export
+//a.js
+export const str = "blablabla~";
+export function log(sth) {
+  return sth;
+}
+对应的导入方式：
+
+//b.js
+import { str, log } from 'a'; //也可以分开写两次，导入的时候带花括号
+
+2.export default
+//a.js
+const str = "blablabla~";
+export default str;
+对应的导入方式：
+
+//b.js
+import str from 'a'; //导入的时候没有花括号
+```
+使用`export default`命令，为模块指定默认输出，这样就不需要知道所要加载模块的变量名
+```js
+//a.js
+let sex = "boy";
+export default sex;（sex不能加大括号）
+```
+原本直接`export sex`外部是无法识别的，加上`default`就可以了。但是一个文件内最多只能有一个`export default`。
+其实此处相当于为`sex`变量值`"boy"`起了一个系统默认的变量名`default`，自然`default`只能有一个值，所以一个文件内不能有多个`export default`。
+```js
+// b.js
+import any from "./a.js";
+import any12 from "./a.js";
+console.log(any, any12); // boy, boy
+```
+>本质上，a.js文件的export default输出一个叫做default的变量，然后系统允许你为它取任意名字。所以可以为import的模块起任何变量名，且不需要用大括号包含

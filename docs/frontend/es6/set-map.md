@@ -4,7 +4,7 @@ title: Set/Map
 ## Set
 Set里面的数据是唯一的，每个元素只能被添加一次，以后添加无效。但是Set不能通过索引值来获取数据。
 ### 基本用法
-ES6 提供了新的数据结构 Set。**它类似于数组，但是成员的值都是唯一的，没有重复的值。**
+ES6提供了新的数据结构Set。**它类似于数组，但是成员的值都是唯一的，没有重复的值。**
 
 Set本身是一个构造函数，用来生成Set数据结构。
 
@@ -53,8 +53,8 @@ blue blue Set { 'red', 'blue', 'green' }
 green green Set { 'red', 'blue', 'green' }
  */
 ```
-## 小技巧
-### Array.from方法可以将Set结构转为数组
+## Set应用
+### Array.from结合Set实现数组去重
 ```js
 // 可以用来实现数组去重
 function dedupe(arr) {
@@ -63,7 +63,7 @@ function dedupe(arr) {
 
 dedupe([1, 1, 2, 3]) // [1, 2, 3]
 ```
-### 扩展运算符和Set结构相结合实现数组去重
+### 扩展运算符结合Set现数组去重
 ```js
 let arr = [3, 5, 2, 2, 5, 5];
 let unique = [...new Set(arr)];
@@ -155,7 +155,11 @@ console.log(personWeakSet);
 Set可以类比于数组，那么Map就可以类比于对象。
 
 JS的对象（Object），本质上是键值对的集合（Hash 结构），但是**传统上只能用字符串当作键**。
-
+```js
+let map = new Map([['a', 1], ['a', 20], ['b', 2]]); // 二维数组
+// 自动去重
+console.log(map); // Map { 'a' => 20, 'b' => 2 }
+```
 ```js
 const data = {};
 const element = document.getElementById('myDiv');
@@ -303,6 +307,28 @@ obj = null;
 obj2 = null;
 ```
 <img :src="$withBase('/es6/map3.png')" alt="">
+
+```js
+class Person{}
+let p = new Person();
+// map有引用计数
+let map = new Map();
+map.set(p, 1);
+// 这里并不会将p从内存中清除，可以在控制台的memory面板中查看
+p = null;
+```
+<img :src="$withBase('/es6/weakmap.png')" alt="">
+
+```js
+class Person{}
+let p = new Person();
+// WeakMap没有引用计数
+let map = new WeakMap();
+map.set(p, 1);
+// 这里会将p从内存中清除，可以在控制台的memory面板中查看
+p = null;
+```
+<img :src="$withBase('/es6/weakmap2.png')" alt="">
 ### WeakMap使用场景
 
 1. Map结构的键值必须是对象；
