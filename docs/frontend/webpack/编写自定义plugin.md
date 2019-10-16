@@ -5,7 +5,7 @@ title: 编写自定义plugin
 
 >一个最基础的`Plugin`的代码是这样的：
 ```js
-class BasicPlugin{
+class BasicPlugin {
   // 在构造函数中获取用户为该插件传入的配置
   constructor(options){
   }

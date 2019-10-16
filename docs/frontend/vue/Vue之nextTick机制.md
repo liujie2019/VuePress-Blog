@@ -128,6 +128,7 @@ import { noop } from 'shared/util';
 // Vue 内部的错误处理函数
 import { handleError } from './error';
 // 判断是否是IE/IOS/内置函数
+// isNative判断是否浏览器原生支持
 import { isIE, isIOS, isNative } from './env';
 
 // 使用 MicroTask 的标识符
@@ -410,3 +411,4 @@ getMyWidth() {
 4. [[vue源码][nextTick]原理以及源码解析](https://mp.weixin.qq.com/s/YnhpWy0oyf3IPoxFL8blPw)
 5. [Vue.nextTick 源码解析](https://ruirui.me/2019/01/24/vue-nextTick/)
 6. [vue方法nextTick源码分析](https://copyfuture.com/blogs-details/20190919232115493dn9vbhvgsabfzvb)
+7. [vue源码分析之nextTick](http://www.fly63.com/article/detial/5364)
