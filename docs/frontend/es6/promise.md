@@ -6,7 +6,7 @@ title: Promise
 :::
 
 ## Promise是什么
-`Promise`对象用于异步计算，表示一个现在、将来或永不可能可用的值。
+Promise对象用于异步计算，表示一个现在、将来或永不可能可用的值。
 
 ### Promise用途
 
@@ -36,12 +36,12 @@ new Promise(
 
 ![3235bd99b94781591c6856bd5259487a.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p520)
 
->浏览器中的`javascript`
+浏览器中的`javascript`
 
 1. 异步操作以事件为主。
 2. 回调主要出现在`ajax`和`file api`
 
->`node.js`
+node.js
 
 1. 无阻塞高并发，是Node.js的招牌。
 2. 异步操作是其保障。
@@ -271,7 +271,7 @@ new Promise((resolve, reject) => {
 ![729fb242d4cb7f7bf73b76bbb21cc190.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p523)
 
 ### catch和then连用
-`catch`也会返回一个`promise`实例，如果没有抛出错误，也会是`fulfilled`状态，会执行后面的`then()`。
+catch也会返回一个promise实例，如果没有抛出错误，也会是`fulfilled`状态，会执行后面的`then()`。
 ```js
 console.log('here we go');
 new Promise(resolve => {
@@ -298,7 +298,7 @@ new Promise(resolve => {
         console.log('No, I catch：', err);
     });
 ```
->结果：`catch`中不抛出错误，后面的`then()`正常执行。
+结果：`catch`中不抛出错误，后面的`then()`正常执行。
 ```js
 here we go
 start
@@ -307,7 +307,7 @@ I catch： Error: test error
 arrive here
 ... and here
 ```
->`catch`中抛出错误，后面的`then()`不执行。
+`catch`中抛出错误，后面的`then()`不执行。
 ```js
 here we go
 start

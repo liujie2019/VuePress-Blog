@@ -11,7 +11,8 @@ module.exports = [
         { text: 'Vue', link: '/frontend/vue/'},
         { text: 'Babel', link: '/frontend/babel/'},
         { text: 'Webpack', link: '/frontend/webpack/'},
-        { text: 'Webpack4配置实战', link: '/frontend/webpack4/'}
+        { text: 'Webpack4配置实战', link: '/frontend/webpack4/'},
+        { text: '每天学点typescript', link: '/frontend/typescript/'}
       ]
     }, {
       text: '服务端积累',

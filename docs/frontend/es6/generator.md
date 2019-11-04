@@ -45,10 +45,44 @@ hw.next()
 
 第四次调用，此时 Generator 函数已经运行完毕，next方法返回对象的value属性为undefined，done属性为true。以后再调用next方法，返回的都是这个值。
 
->总结一下：调用 Generator 函数，返回一个遍历器对象，代表 Generator 函数的内部指针。以后，每次调用遍历器对象的next方法，就会返回一个有着value和done两个属性的对象。value属性表示当前的内部状态的值，是yield表达式后面那个表达式的值；done属性是一个布尔值，表示是否遍历结束。
+总结一下：调用 Generator 函数，返回一个遍历器对象，代表 Generator 函数的内部指针。以后，每次调用遍历器对象的next方法，就会返回一个有着value和done两个属性的对象。value属性表示当前的内部状态的值，是yield表达式后面那个表达式的值；done属性是一个布尔值，表示是否遍历结束。
 
 ## Generator函数的异步应用
 ### co模块
-
+```js
+// mz模块把node中的一些常用模块promise化了
+const {fs} = require('mz');
+function * read() {
+    let filename = yield fs.readFile('./name.txt', 'utf8');
+    let age = yield fs.readFile(filename, 'utf8');
+    let b = yield [1, 2, 3];
+    return age + b;
+}
+// const co = require('co');
+// 实现co
+function co(it) {// express koa
+    // 返回的是Promise
+    return new Promise((resolve, reject) => {
+        function next(r) { //如果碰到异步迭代 需要借助一个自执行函数来实现，保证第一次执行后调用下一次执行
+            const {value, done} = it.next(r);
+            if(!done) { // babel
+                // 不管value是什么类型，都包装成promise
+                Promise.resolve(value).then(r => {
+                    next(r);
+                }, err => {
+                    reject(err);
+                });
+            } else { // 完成了走成功
+                resolve(value);
+            }
+        }
+        next();
+    });
+}
+// co接收generator参数，返回的是Promise
+co(read()).then(data=>{
+    console.log(data);
+});
+```
 ## 参考文档
 1. [Generator 函数的语法](http://es6.ruanyifeng.com/#docs/generator)
