@@ -29,6 +29,8 @@ const mongodb =require('./backend/mongodb/index.js');
 const mysql = require('./backend/mysql/index.js');
 const nginx = require('./backend/nginx/index.js');
 
+// 数据结构与算法
+const algorithm = require('./algorithm/index.js');
 // 工具
 // const git = require('./tools/git/index.js');
 // const github = require('./tools/github/index.js');
@@ -37,7 +39,6 @@ const nginx = require('./backend/nginx/index.js');
 // 更多
 const git = require('./more/git/index.js');
 const linux = require('./more/linux/index.js');
-// const algorithm = require('./more/algorithm/index.js');
 // const interview = require('./more/interview/index.js');
 
 
@@ -83,7 +84,7 @@ module.exports = {
 //   '/tools/git/': git,
 //   '/tools/github/': github,
 //   '/tools/vscode/': vscode,
-
+  '/algorithm/': algorithm,
   // 更多 more
   '/more/git/': git,
   '/more/linux/': linux
