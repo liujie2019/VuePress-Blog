@@ -24,6 +24,9 @@ module.exports = [
         { text: 'Nginx', link: '/backend/nginx/'},
       ]
     }, {
+        text: '每日一题',
+        link: '/interview/'
+    }, {
         text: '数据结构与算法',
         link: '/algorithm/'
     }, {

@@ -31,6 +31,8 @@ const nginx = require('./backend/nginx/index.js');
 
 // 数据结构与算法
 const algorithm = require('./algorithm/index.js');
+// 每日一题
+const interview = require('./interview/index.js');
 // 工具
 // const git = require('./tools/git/index.js');
 // const github = require('./tools/github/index.js');
@@ -39,7 +41,6 @@ const algorithm = require('./algorithm/index.js');
 // 更多
 const git = require('./more/git/index.js');
 const linux = require('./more/linux/index.js');
-// const interview = require('./more/interview/index.js');
 
 
 /**
@@ -85,11 +86,10 @@ module.exports = {
 //   '/tools/github/': github,
 //   '/tools/vscode/': vscode,
   '/algorithm/': algorithm,
+  '/interview/': interview,
   // 更多 more
   '/more/git/': git,
   '/more/linux/': linux
-//   '/more/algorithm/': algorithm,
-//   '/more/interview/': interview,
   // 根目录下的 sidebar, 对于所有未匹配到的都会应用该 sidebar
   // '/': [''] // 此处选择禁用
 };
