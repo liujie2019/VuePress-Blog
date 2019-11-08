@@ -4,7 +4,7 @@ const pluginConf = require('../../conf/pluginConf');
 const headConf = require('../../conf/headConf');
 module.exports = {
     title: '砥砺前行',
-    description: '生命的道路上永远没有捷径可言，只有脚踏实地走下去',
+    description: 'Stay hungry，Stay foolish',
     // theme: 'awesome',
     locales: {
         '/': {
