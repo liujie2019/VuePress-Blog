@@ -5,6 +5,369 @@ title: MVVM原理详解
 写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
 :::
 
+1. 模板的编译
+2. 数据劫持-观察数据变化(Object.defineProperty，给所有属性加上get和set)
+3. Watcher：数据发生变化，就重新编译模板
+
+<img :src="$withBase('/vue/mvvm.png')" alt="">
+
+模块职责划分：
+* compile.js：编译模板
+* observer.js：数据劫持
+* watcher.js：创建观察者
+* dep：new Watch的时候，会将当前的watcher添加到dep的订阅者数组中，一旦数据发生变化，会调用dep的notify方法，通知对应数据的观察者更新数据
+
+```js
+// MVVM.js
+class MVVM {
+    constructor(options) {
+        const {el, data, mounted} = options;
+        // 先把可用的数据挂载在实例上
+        this.$el = el;
+        this.$data = data;
+        // 如果有要编译的模板就开始编译
+        if (this.$el) {
+            // 数据劫持 就是把对象的所有属性(this.$data中的属性)改成get和set方法
+            new Observer(this.$data);
+            // 数据代理，由vm.$data.message -> vm.message
+            this.proxyData(this.$data);
+            // 编译过程需要数据和元素
+            // const vm = new MVVM() 实例化的过程中，this指向当前实例，这里就是vm
+            new Compile(this.$el, this);
+            mounted.call(this);
+        }
+    }
+    proxyData(data) {
+        Object.keys(data).forEach(key => {
+            // this就是当前vm实例
+            Object.defineProperty(this, key, {
+                get() {
+                    return data[key];
+                },
+                set(newValue) {
+                    data[key] = newValue;
+                }
+            });
+        });
+    }
+}
+```
+## 编译模板
+```js
+// compile.js
+class Compile {
+    constructor(el, vm) { // vm就是当前的vm实例
+        // 如果在实例化vm的时候，el传的是字符串，即el: '#app'。
+        // 这里就需要document.querySelector(el)获取到对应的DOM节点
+        this.el = this.isElementNode(el) ? el : document.querySelector(el);
+        this.vm = vm;
+        if (this.el) {
+            // 如果可以获取到元素，才开始编译
+            // 1. 先把this.el中的真实的DOM放到内存中(采用文档碎片-fragment，在内存中操作元素性能好)
+            // 放在内存中操作DOM不会造成页面的重复渲染，性能更好
+            const fragment = this.nodeToFragment(this.el);
+            // 2. 编译 => 提取想要的元素节点v-model和文本节点{{}}
+            this.compile(fragment);
+            // 3. 最后把编译好的fragment放回到页面里去
+            this.el.appendChild(fragment);
+        }
+    }
+    /**一些辅助方法 */
+    isElementNode(node) {
+        // 判断是否为元素节点
+        return node.nodeType === 1;
+    }
+    // 判断是否为指令
+    isDirective(name) {
+        return name.includes('v-');
+    }
+    /**核心方法 */
+    compileElement(node) { // node是当前要编译的节点
+        // 带v-model
+        const attrs = node.attributes; // 获取当前节点的所有属性
+        // console.log(attrs);
+        Array.from(attrs).forEach(attr => {
+            const attrName = attr.name;
+            // 判断属性名字是不是包含v-
+            if (this.isDirective(attrName)) {
+                // 如果包含v-，则取到对应的值放到节点中
+                // expr为指令对应的值
+                const expr = attr.value;
+                // node vm.$data
+                // todo this.vm.$data中多级属性获取值，比如vm.$data.obj.a.a...
+
+                // const type = attrName.slice(2);
+                // attrName的值为v-model
+                // 还有其他指令v-text、v-html
+                const [, type] = attrName.split('-');
+                CompileUtil[type](node, this.vm, expr);
+            }
+        });
+    }
+    compileText(node) {
+        // 带{{}}
+        const text = node.textContent; // 获取文本中的内容
+        const reg = /\{\{([^}]+)\}\}/g;
+        if (reg.test(text)) {
+            CompileUtil['text'](node, this.vm, text);
+        }
+    }
+
+    compile(fragment) {
+        // 需要递归
+        // 注意childNodes也包含了空白节点
+        const childNodes = fragment.childNodes;
+        // console.log(childNodes);
+        // 这里拿到的childNodes只是第一层，需要递归拿深层元素和文本
+        // childNodes是一个NodeList，即类数组
+        Array.from(childNodes).forEach(node => {
+            if (this.isElementNode(node)) {
+                // 如果当前节点是元素节点，其可能还有子节点，因此需要递归检查
+                // console.log('元素节点', node);
+                // 编译元素节点
+                this.compileElement(node);
+                // 递归编译元素节点
+                this.compile(node);
+            } else { // 当前节点是文本节点
+                // 编译文本节点
+                // console.log('文本节点', node);
+                this.compileText(node);
+            }
+        });
+    }
+    nodeToFragment(el) { // 将el中的内容全部放到内存中
+        // 新建一个文档碎片
+        const fragment = document.createDocumentFragment();
+        let firstChild;
+        while(firstChild = el.firstChild) {
+            fragment.appendChild(firstChild);
+        }
+        return fragment; // 返回内存中的节点
+    }
+}
+
+CompileUtil = {
+    // 这里的expr值是message.a
+    getVal(vm, expr) { // 获取实例上对应的数据
+        expr = expr.split('.');
+        // console.log(expr);
+        // console.log(vm.$data);
+        // 上一次的结果作为下一次循环的输入，采用reduce
+        return expr.reduce((prev, next) => {
+            return prev[next];
+        }, vm.$data);
+    },
+    getTextVal(vm, expr) { // 获取编译文本
+        return expr.replace(/\{\{([^}]+)\}\}/g, (...arguments) => {
+            //  ["{{message.a}}", "message.a", 0, "{{message.a}}"]
+            // console.log(arguments);
+            // arguments[1]对应的值为message.a，即正则中分组的值
+            return this.getVal(vm, arguments[1]);
+        });
+    },
+    setVal(vm, expr, value) {
+        expr = expr.split('.');
+        // reduce数据收敛
+        return expr.reduce((prev, next, currentIndex) => {
+            // 最后一项改为赋值
+            if (currentIndex === expr.length - 1) {
+                return prev[next] = value;
+            }
+            return prev[next];
+        }, vm.$data);
+    },
+    text(node, vm, expr) { // 文本处理
+        const updateFn = this.update['textUpdate'];
+        // message.a => [message, a] vm.$data.message.a
+        // console.log(expr); // {{message.a}}
+        // expr可能是多层嵌套的，比如data.message.obj.a
+        // 对于属性嵌套的情况，先将对应的expr拆分为数组，一层一层的取
+        const value = this.getTextVal(vm, expr);
+        // console.log(value); // message.a
+        // {{a}} {{b}}
+        // 给每个文本添加一个watcher
+        expr.replace(/\{\{([^}]+)\}\}/g, (...arguments) => {
+            new Watcher(vm, arguments[1], () => {
+                // 如果数据变化了，文本节点需要重新获取依赖的数据更新文本中的内容
+                updateFn && updateFn(node, this.getTextVal(vm, expr));
+            });
+        });
+        updateFn && updateFn(node, value);
+    },
+    model(node, vm, expr) { // v-model处理
+        const updateFn = this.update['modelUpdate'];
+        // 这里应该加一个数据监控
+        // 数据变化了，应该调用watcher的callback
+        new Watcher(vm, expr, newValue => {
+            // 当值变化后会调用cb 将新的值传递过来
+            updateFn && updateFn(node, newValue);
+        });
+        // 输入框input事件绑定，实现数据的双向绑定
+        node.addEventListener('input', e => {
+            const newValue = e.target.value;
+            // 值的改变会调用set，set中又会调用notify，notify中调用watcher的update方法实现更新
+            this.setVal(vm, expr, newValue);
+        });
+        // message.a => [message, a] vm.$data.message.a
+        updateFn && updateFn(node, this.getVal(vm, expr));
+    },
+    update: {
+        // 文本更新
+        textUpdate(node, value) {
+            node.textContent = value;
+        },
+        // 输入框更新
+        modelUpdate(node, value) {
+            node.value = value;
+        }
+    }
+};
+```
+## 数据劫持
+```js
+// Observer.js
+class Observer {
+    constructor(data) {
+        this.observer(data);
+    }
+    observer(data) {
+        // 要对这个data数据将原有的属性改成set和get的形式
+        // 如果data不存在或者不是对象，则不需要劫持
+        if (!data || typeof data !== 'object') {
+            return;
+        }
+        // 要将数据 一一劫持，先获取到data的key和value
+        Object.keys(data).forEach(key => {
+            // 劫持
+            this.defineReactive(data, key, data[key]);
+            this.observer(data[key]); // 深度递归劫持
+        });
+    }
+    // 定义响应式
+    defineReactive(obj, key, value) {
+        const that = this;
+        const dep = new Dep(); // 每个变化的数据都会对应一个数组，这个数组是存放所有更新的操作
+        Object.defineProperty(obj, key, {
+            enumerable: true,
+            configurable: true,
+            get() { // 当取值时调用的方法
+                // 设置的时候可以做其他事情
+                // Dep.target是指向当前的watcher实例
+                Dep.target && dep.addSub(Dep.target);
+                return value;
+            },
+            set(newValue) { // 当给data属性中设置值的时候，更改获取的属性的值
+                if (newValue !== value) {
+                    that.observer(newValue); // 如果新值是对象，则需要对新值继续劫持
+                    value = newValue;
+                    dep.notify(); // 通知所有订阅者，数据更新了
+                }
+            }
+        });
+    }
+}
+// 发布-订阅
+class Dep {
+    constructor() {
+        // 订阅的数组
+        this.subs = [];
+    }
+    addSub(watcher) {
+        this.subs.push(watcher);
+    }
+    notify() {
+        this.subs.forEach(watcher => watcher.update());
+    }
+}
+```
+## Watch
+```js
+// watch.js
+// 观察者的目的就是给需要变化的那个元素增加一个观察者，当数据变化后执行对应的方法
+class Watcher {
+    // 根据vm, expr来获取新的值，如果值变化了，调用cb函数
+    constructor(vm, expr, cb) {
+        this.vm = vm;
+        this.expr = expr;
+        this.cb = cb;
+        // 先获取旧值
+        this.value = this.get();
+        // new Watcher()的时候会调用this.get()方法去vm实例上获取对应的属性值
+        // 获取属性值就会调用get方法，在get方法中把当前的watcher实例添加到this.subs订阅数组中
+    }
+    getVal(vm, expr) { // 获取实例上对应的数据
+        expr = expr.split('.');
+        return expr.reduce((prev, next) => {
+            return prev[next];
+        }, vm.$data);
+    }
+    get() {
+        Dep.target = this; // this就是当前的watcher实例
+        const value = this.getVal(this.vm, this.expr);
+        Dep.target = null;
+        return value;
+    }
+    // 对外暴露的方法
+    update() {
+        const newValue = this.getVal(this.vm, this.expr);
+        const oldValue = this.value;
+        if (newValue !== oldValue) {
+            this.cb(newValue);
+        }
+    }
+}
+// 用新值和旧值进行比对，如果发生变化，就调用更新方法
+```
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>手写MVVM</title>
+</head>
+<body>
+    <div id="app">
+        <input type="text" v-model="message.a" />
+        <div>{{message.a}}</div>
+        <ul>
+            <li></li>
+        </ul>
+        {{message.a}}
+        {{message.b}}
+    </div>
+    <script src="./watcher.js"></script>
+    <script src="./observer.js"></script>
+    <script src="./compile.js"></script>
+    <script src="./MVVM.js"></script>
+    <script>
+        // 我们的数据一般都挂载在vm上
+        const vm = new MVVM({
+            el: '#app',
+            data: {
+                message: {
+                    a: 'hello',
+                    b: 'mvvm'
+                }
+            },
+            mounted() {
+                setTimeout(() => {
+                    console.log('mounted触发了');
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
+```
+## 总结
+上述实现的MVVM包含了以下几点：
+
+* 通过模板编译对`{{}}`进行数据的替换
+* 通过Object.defineProperty的get和set实现数据劫持
+* 通过发布订阅模式实现数据变化与视图更新的一致性
+* 通过Object.defineProperty将data数据代理到当前vm实例(即this)上
 
 ## 参考文档
 1. [深入理解Vue响应式原理](https://funteas.com/topic/5a809f5847dc830a0e4690c2)
