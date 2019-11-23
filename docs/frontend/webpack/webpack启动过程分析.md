@@ -1,0 +1,582 @@
+---
+title: webpack启动过程分析
+---
+::: tip
+写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
+:::
+
+## webpack打包命令
+```js
+"bin": "./bin/webpack.js",
+```
+node_modules/webpack/bin/webpack.js源码如下：
+```js
+#!/usr/bin/env node
+
+// @ts-ignore
+process.exitCode = 0;
+
+/**
+ * @param {string} command process to run
+ * @param {string[]} args commandline arguments
+ * @returns {Promise<void>} promise
+ */
+const runCommand = (command, args) => {
+	const cp = require("child_process"); // 通过开启子进程
+	return new Promise((resolve, reject) => {
+		const executedCommand = cp.spawn(command, args, {
+			stdio: "inherit",
+			shell: true
+		});
+
+		executedCommand.on("error", error => {
+			reject(error);
+		});
+
+		executedCommand.on("exit", code => {
+			if (code === 0) {
+				resolve();
+			} else {
+				reject();
+			}
+		});
+	});
+};
+
+/**
+ * @param {string} packageName name of the package
+ * @returns {boolean} is the package installed?
+ * 判断某个npm包是否安装
+ */
+const isInstalled = packageName => {
+	try {
+		require.resolve(packageName);
+
+		return true;
+	} catch (err) {
+		return false;
+	}
+};
+
+/**
+ * @typedef {Object} CliOption
+ * @property {string} name display name
+ * @property {string} package npm package name
+ * @property {string} binName name of the executable file
+ * @property {string} alias shortcut for choice
+ * @property {boolean} installed currently installed?
+ * @property {boolean} recommended is recommended
+ * @property {string} url homepage
+ * @property {string} description description
+ */
+
+/** @type {CliOption[]} */
+const CLIs = [
+	{
+		name: "webpack-cli",
+		package: "webpack-cli",
+		binName: "webpack-cli",
+		alias: "cli",
+		installed: isInstalled("webpack-cli"),
+		recommended: true,
+		url: "https://github.com/webpack/webpack-cli",
+		description: "The original webpack full-featured CLI."
+	},
+	{
+		name: "webpack-command", // 是一个轻量级的webpack-cli，只不过webpack-cli功能更丰富
+		package: "webpack-command",
+		binName: "webpack-command",
+		alias: "command",
+		installed: isInstalled("webpack-command"),
+		recommended: false,
+		url: "https://github.com/webpack-contrib/webpack-command",
+		description: "A lightweight, opinionated webpack CLI."
+	}
+];
+
+// webpack-cli和webpack-command两者安装其一，webpack即可正常运行
+const installedClis = CLIs.filter(cli => cli.installed);
+
+// 如果webpack-cli和webpack-command都没有安装
+if (installedClis.length === 0) {
+	const path = require("path");
+	const fs = require("fs");
+	const readLine = require("readline");
+
+	let notify =
+		"One CLI for webpack must be installed. These are recommended choices, delivered as separate packages:";
+
+	for (const item of CLIs) {
+		if (item.recommended) {
+			notify += `\n - ${item.name} (${item.url})\n   ${item.description}`;
+		}
+	}
+
+	console.error(notify);
+
+	const isYarn = fs.existsSync(path.resolve(process.cwd(), "yarn.lock"));
+
+	const packageManager = isYarn ? "yarn" : "npm";
+	const installOptions = [isYarn ? "add" : "install", "-D"];
+
+	console.error(
+		`We will use "${packageManager}" to install the CLI via "${packageManager} ${installOptions.join(
+			" "
+		)}".`
+	);
+
+	const question = `Do you want to install 'webpack-cli' (yes/no): `;
+
+	const questionInterface = readLine.createInterface({
+		input: process.stdin,
+		output: process.stderr
+	});
+    // 询问是否要安装webpack-cli
+	questionInterface.question(question, answer => {
+		questionInterface.close();
+        // 如果输入yes
+		const normalizedAnswer = answer.toLowerCase().startsWith("y");
+
+		if (!normalizedAnswer) {
+			console.error(
+				"You need to install 'webpack-cli' to use webpack via CLI.\n" +
+					"You can also install the CLI manually."
+			);
+			process.exitCode = 1;
+
+			return;
+		}
+
+		const packageName = "webpack-cli";
+        // 正在安装的提示
+		console.log(
+			`Installing '${packageName}' (running '${packageManager} ${installOptions.join(
+				" "
+			)} ${packageName}')...`
+		);
+        // 调用runCommand方法
+        // packageManager是模块管理工具 yarn 或者 npm
+        // 假设packageManager为yarn
+        // installOptions就是['add', '-D']
+        // installOptions.concat(packageName)就是['add', '-D', 'webpack-cli']
+		runCommand(packageManager, installOptions.concat(packageName))
+			.then(() => {
+                // 安装好webpack-cli后，就引入
+				require(packageName); //eslint-disable-line
+			})
+			.catch(error => {
+				console.error(error);
+				process.exitCode = 1; // 安装失败打印错误信息，同时exitCode设置为1
+			});
+	});
+} else if (installedClis.length === 1) {
+    // 如果webpack-cli和webpack-command安装了其中一个，则直接使用安装的那个cli
+	const path = require("path");
+	const pkgPath = require.resolve(`${installedClis[0].package}/package.json`);
+	// eslint-disable-next-line node/no-missing-require
+	const pkg = require(pkgPath);
+	// eslint-disable-next-line node/no-missing-require
+	require(path.resolve(
+		path.dirname(pkgPath),
+		pkg.bin[installedClis[0].binName]
+	));
+} else { // 如果webpack-cli和webpack-command都安装了
+	console.warn(
+		`You have installed ${installedClis
+			.map(item => item.name)
+			.join(
+				" and "
+			)} together. To work with the "webpack" command you need only one CLI package, please remove one of them or use them directly via their binary.`
+	);
+
+	// @ts-ignore
+	process.exitCode = 1;
+}
+```
+通过上述分析可以得出如下结论：webpack最终找到了webpack-cli(或者webpack-command)这个npm包，并且执行了cli。
+
+## webpack-cli做的事情
+1. 引入yargs这个包，对命令行进行定制；
+2. 分析命令行参数，对各个参数进行转换，组成编译配置项；
+3. 引入webpack，根据配置项进行编译和构建
+
+node_modules/webpack-cli/cli.js源码如下：
+```js
+#!/usr/bin/env node
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+const { NON_COMPILATION_ARGS } = require("./utils/constants");
+
+(function() {
+	// wrap in IIFE to be able to use return
+
+	const importLocal = require("import-local");
+	// Prefer the local installation of webpack-cli
+	if (importLocal(__filename)) {
+		return;
+	}
+    // 使用v8缓存
+	require("v8-compile-cache");
+
+	const ErrorHelpers = require("./utils/errorHelpers");
+
+    // 从NON_COMPILATION_CMD分析出不需要编译的命令
+	const NON_COMPILATION_CMD = process.argv.find(arg => {
+		if (arg === "serve") {
+			global.process.argv = global.process.argv.filter(a => a !== "serve");
+			process.argv = global.process.argv;
+		}
+        // const NON_COMPILATION_ARGS = ["init", "migrate", "serve", "generate-loader", "generate-plugin", "info"];
+        // 上述6个命令将不会实例化webpack，会直接运行命令
+        // find方法返回符合要求的第一个元素，如果没有符合条件的则返回undefined
+		return NON_COMPILATION_ARGS.find(a => a === arg);
+	});
+    // 如果匹配到了对应的命令，则直接return
+	if (NON_COMPILATION_CMD) {
+		return require("./utils/prompt-command")(NON_COMPILATION_CMD, ...process.argv);
+	}
+
+	const yargs = require("yargs").usage(`webpack-cli ${require("../package.json").version}
+
+Usage: webpack-cli [options]
+       webpack-cli [options] --entry <entry> --output <output>
+       webpack-cli [options] <entries...> --output <output>
+       webpack-cli <command> [options]
+
+For more information, see https://webpack.js.org/api/cli/.`);
+
+	require("./config/config-yargs")(yargs);
+
+	// yargs will terminate the process early when the user uses help or version.
+	// This causes large help outputs to be cut short (https://github.com/nodejs/node/wiki/API-changes-between-v0.10-and-v4#process).
+	// To prevent this we use the yargs.parse API and exit the process normally
+	yargs.parse(process.argv.slice(2), (err, argv, output) => {
+		Error.stackTraceLimit = 30;
+
+		// arguments validation failed
+		if (err && output) {
+			console.error(output);
+			process.exitCode = 1;
+			return;
+		}
+
+		// help or version info
+		if (output) {
+			console.log(output);
+			return;
+		}
+
+		if (argv.verbose) {
+			argv["display"] = "verbose";
+		}
+
+		let options;
+		try {
+			options = require("./utils/convert-argv")(argv);
+		} catch (err) {
+			if (err.code === "MODULE_NOT_FOUND") {
+				const moduleName = err.message.split("'")[1];
+				let instructions = "";
+				let errorMessage = "";
+
+				if (moduleName === "webpack") {
+					errorMessage = `\n${moduleName} not installed`;
+					instructions = `Install webpack to start bundling: \u001b[32m\n  $ npm install --save-dev ${moduleName}\n`;
+
+					if (process.env.npm_execpath !== undefined && process.env.npm_execpath.includes("yarn")) {
+						instructions = `Install webpack to start bundling: \u001b[32m\n $ yarn add ${moduleName} --dev\n`;
+					}
+					Error.stackTraceLimit = 1;
+					console.error(`${errorMessage}\n\n${instructions}`);
+					process.exitCode = 1;
+					return;
+				}
+			}
+
+			if (err.name !== "ValidationError") {
+				throw err;
+			}
+
+			const stack = ErrorHelpers.cleanUpWebpackOptions(err.stack, err.message);
+			const message = err.message + "\n" + stack;
+
+			if (argv.color) {
+				console.error(`\u001b[1m\u001b[31m${message}\u001b[39m\u001b[22m`);
+			} else {
+				console.error(message);
+			}
+
+			process.exitCode = 1;
+			return;
+		}
+
+		/**
+		 * When --silent flag is present, an object with a no-op write method is
+		 * used in place of process.stout
+		 */
+		const stdout = argv.silent ? { write: () => {} } : process.stdout;
+
+		function ifArg(name, fn, init) {
+			if (Array.isArray(argv[name])) {
+				if (init) init();
+				argv[name].forEach(fn);
+			} else if (typeof argv[name] !== "undefined") {
+				if (init) init();
+				fn(argv[name], -1);
+			}
+		}
+
+		function processOptions(options) {
+			// process Promise
+			if (typeof options.then === "function") {
+				options.then(processOptions).catch(function(err) {
+					console.error(err.stack || err);
+					// eslint-disable-next-line no-process-exit
+					process.exit(1);
+				});
+				return;
+			}
+
+			const firstOptions = [].concat(options)[0];
+			const statsPresetToOptions = require("webpack").Stats.presetToOptions;
+
+			let outputOptions = options.stats;
+			if (typeof outputOptions === "boolean" || typeof outputOptions === "string") {
+				outputOptions = statsPresetToOptions(outputOptions);
+			} else if (!outputOptions) {
+				outputOptions = {};
+			}
+
+			ifArg("display", function(preset) {
+				outputOptions = statsPresetToOptions(preset);
+			});
+
+			outputOptions = Object.create(outputOptions);
+			if (Array.isArray(options) && !outputOptions.children) {
+				outputOptions.children = options.map(o => o.stats);
+			}
+			if (typeof outputOptions.context === "undefined") outputOptions.context = firstOptions.context;
+
+			ifArg("env", function(value) {
+				if (outputOptions.env) {
+					outputOptions._env = value;
+				}
+			});
+
+			ifArg("json", function(bool) {
+				if (bool) {
+					outputOptions.json = bool;
+					outputOptions.modules = bool;
+				}
+			});
+
+			if (typeof outputOptions.colors === "undefined") outputOptions.colors = require("supports-color").stdout;
+
+			ifArg("sort-modules-by", function(value) {
+				outputOptions.modulesSort = value;
+			});
+
+			ifArg("sort-chunks-by", function(value) {
+				outputOptions.chunksSort = value;
+			});
+
+			ifArg("sort-assets-by", function(value) {
+				outputOptions.assetsSort = value;
+			});
+
+			ifArg("display-exclude", function(value) {
+				outputOptions.exclude = value;
+			});
+
+			if (!outputOptions.json) {
+				if (typeof outputOptions.cached === "undefined") outputOptions.cached = false;
+				if (typeof outputOptions.cachedAssets === "undefined") outputOptions.cachedAssets = false;
+
+				ifArg("display-chunks", function(bool) {
+					if (bool) {
+						outputOptions.modules = false;
+						outputOptions.chunks = true;
+						outputOptions.chunkModules = true;
+					}
+				});
+
+				ifArg("display-entrypoints", function(bool) {
+					outputOptions.entrypoints = bool;
+				});
+
+				ifArg("display-reasons", function(bool) {
+					if (bool) outputOptions.reasons = true;
+				});
+
+				ifArg("display-depth", function(bool) {
+					if (bool) outputOptions.depth = true;
+				});
+
+				ifArg("display-used-exports", function(bool) {
+					if (bool) outputOptions.usedExports = true;
+				});
+
+				ifArg("display-provided-exports", function(bool) {
+					if (bool) outputOptions.providedExports = true;
+				});
+
+				ifArg("display-optimization-bailout", function(bool) {
+					if (bool) outputOptions.optimizationBailout = bool;
+				});
+
+				ifArg("display-error-details", function(bool) {
+					if (bool) outputOptions.errorDetails = true;
+				});
+
+				ifArg("display-origins", function(bool) {
+					if (bool) outputOptions.chunkOrigins = true;
+				});
+
+				ifArg("display-max-modules", function(value) {
+					outputOptions.maxModules = +value;
+				});
+
+				ifArg("display-cached", function(bool) {
+					if (bool) outputOptions.cached = true;
+				});
+
+				ifArg("display-cached-assets", function(bool) {
+					if (bool) outputOptions.cachedAssets = true;
+				});
+
+				if (!outputOptions.exclude) outputOptions.exclude = ["node_modules", "bower_components", "components"];
+
+				if (argv["display-modules"]) {
+					outputOptions.maxModules = Infinity;
+					outputOptions.exclude = undefined;
+					outputOptions.modules = true;
+				}
+			}
+
+			ifArg("hide-modules", function(bool) {
+				if (bool) {
+					outputOptions.modules = false;
+					outputOptions.chunkModules = false;
+				}
+			});
+
+			ifArg("info-verbosity", function(value) {
+				outputOptions.infoVerbosity = value;
+			});
+
+			ifArg("build-delimiter", function(value) {
+				outputOptions.buildDelimiter = value;
+			});
+
+			const webpack = require("webpack");
+
+			let lastHash = null;
+			let compiler;
+			try {
+                // 生成compiler对象
+				compiler = webpack(options);
+			} catch (err) {
+				if (err.name === "WebpackOptionsValidationError") {
+					if (argv.color) console.error(`\u001b[1m\u001b[31m${err.message}\u001b[39m\u001b[22m`);
+					else console.error(err.message);
+					// eslint-disable-next-line no-process-exit
+					process.exit(1);
+				}
+
+				throw err;
+			}
+            // 如果命令行参数中包含progress
+			if (argv.progress) {
+                // 则会实例化ProgressPlugin插件
+				const ProgressPlugin = require("webpack").ProgressPlugin;
+                // 从这里可以看出，每一个插件都是一个类，并且都有一个apply方法
+                // apply方法接收compiler对象作为参数
+				new ProgressPlugin({
+					profile: argv.profile
+				}).apply(compiler);
+			}
+			if (outputOptions.infoVerbosity === "verbose") {
+				if (argv.w) {
+					compiler.hooks.watchRun.tap("WebpackInfo", compilation => {
+						const compilationName = compilation.name ? compilation.name : "";
+						console.error("\nCompilation " + compilationName + " starting…\n");
+					});
+				} else {
+					compiler.hooks.beforeRun.tap("WebpackInfo", compilation => {
+						const compilationName = compilation.name ? compilation.name : "";
+						console.error("\nCompilation " + compilationName + " starting…\n");
+					});
+				}
+				compiler.hooks.done.tap("WebpackInfo", compilation => {
+					const compilationName = compilation.name ? compilation.name : "";
+					console.error("\nCompilation " + compilationName + " finished\n");
+				});
+			}
+
+			function compilerCallback(err, stats) {
+				if (!options.watch || err) {
+					// Do not keep cache anymore
+					compiler.purgeInputFileSystem();
+				}
+				if (err) {
+					lastHash = null;
+					console.error(err.stack || err);
+					if (err.details) console.error(err.details);
+					process.exitCode = 1;
+					return;
+				}
+				if (outputOptions.json) {
+					stdout.write(JSON.stringify(stats.toJson(outputOptions), null, 2) + "\n");
+				} else if (stats.hash !== lastHash) {
+					lastHash = stats.hash;
+					if (stats.compilation && stats.compilation.errors.length !== 0) {
+						const errors = stats.compilation.errors;
+						if (errors[0].name === "EntryModuleNotFoundError") {
+							console.error("\n\u001b[1m\u001b[31mInsufficient number of arguments or no entry found.");
+							console.error(
+								"\u001b[1m\u001b[31mAlternatively, run 'webpack(-cli) --help' for usage info.\u001b[39m\u001b[22m\n"
+							);
+						}
+					}
+					const statsString = stats.toString(outputOptions);
+					const delimiter = outputOptions.buildDelimiter ? `${outputOptions.buildDelimiter}\n` : "";
+					if (statsString) stdout.write(`${statsString}\n${delimiter}`);
+				}
+				if (!options.watch && stats.hasErrors()) {
+					process.exitCode = 2;
+				}
+			}
+            // 如果是watch模式
+			if (firstOptions.watch || options.watch) {
+				const watchOptions =
+					firstOptions.watchOptions || options.watchOptions || firstOptions.watch || options.watch || {};
+				if (watchOptions.stdin) {
+					process.stdin.on("end", function(_) {
+						process.exit(); // eslint-disable-line
+					});
+					process.stdin.resume();
+				}
+                // 会调用watch方法
+				compiler.watch(watchOptions, compilerCallback);
+				if (outputOptions.infoVerbosity !== "none") console.error("\nwebpack is watching the files…\n");
+			} else {
+				compiler.run((err, stats) => {
+					if (compiler.close) {
+						compiler.close(err2 => {
+							compilerCallback(err || err2, stats);
+						});
+					} else {
+						compilerCallback(err, stats);
+					}
+				});
+			}
+		}
+		processOptions(options);
+	});
+})();
+```
+### webpack-cli执行的结果分析总结
+webpack-cli对配置文件和命令行参数进行转换最终生成配置选项参数options，最终会根据配置参数实例化webpack对象，然后执行构建流程。

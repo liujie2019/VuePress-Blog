@@ -5,6 +5,7 @@ title: MVVM原理详解
 写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
 :::
 
+主要来说下如下几个点的实现：
 1. 模板的编译
 2. 数据劫持-观察数据变化(Object.defineProperty，给所有属性加上get和set)
 3. Watcher：数据发生变化，就重新编译模板
@@ -371,3 +372,4 @@ class Watcher {
 
 ## 参考文档
 1. [深入理解Vue响应式原理](https://funteas.com/topic/5a809f5847dc830a0e4690c2)
+2. [不好意思！耽误你的十分钟，让MVVM原理还给你](https://juejin.im/post/5abdd6f6f265da23793c4458#heading-11)
