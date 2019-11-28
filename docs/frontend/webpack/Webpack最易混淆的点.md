@@ -17,7 +17,7 @@ title: Webpack最易混淆的点
 * 当我们写的 module 源文件传到 webpack 进行打包时，webpack 会根据文件引用关系生成 chunk 文件，webpack 会对这个 chunk 文件进行一些操作；
 * webpack 处理好 chunk 文件后，最后会输出 bundle 文件，这个 bundle 文件包含了经过加载和编译的最终源文件，所以它可以直接在浏览器中运行。
 
-一般来说一个 chunk 对应一个 bundle，比如上图中的 utils.js -> chunks 1 -> utils.bundle.js；但也有例外，比如说上图中，我就用 MiniCssExtractPlugin 从 chunks 0 中抽离出了 index.bundle.css 文件。
+一般来说一个chunk对应一个bundle，比如上图中的 utils.js -> chunks 1 -> utils.bundle.js；但也有例外，比如说上图中，我就用 MiniCssExtractPlugin 从 chunks 0 中抽离出了 index.bundle.css 文件。
 
 一句话总结：module，chunk 和 bundle 其实就是同一份逻辑代码在不同转换场景下的取了三个名字：
 我们直接写出来的是 module，webpack 处理时是 chunk，最后生成浏览器可以直接运行的 bundle。
@@ -70,9 +70,9 @@ webpackPreload是预加载当前导航下可能需要资源，它和 webpackPref
 
 一句话总结：webpackChunkName是为懒加载的文件取别名，webpackPrefetch会在浏览器闲置下载文件，webpackPreload会在父chunk加载时并行下载文件。
 
-## hash、chunkhash、contenthash的区别
+## 文件指纹(hash、chunkhash、contenthash的区别)
+文件指纹：打包后输出的文件名的后缀，可以用来做版本管理。设置了文件指纹后，对于没有修改的文件，可以更好的利用浏览器的缓存，从而加速页面的访问速度。
 什么是chunk？
-
 ```js
 entry: {
     index: './src/index.js',
@@ -81,27 +81,89 @@ entry: {
 ```
 所谓chunk，我们可以简单理解为entry中定义的入口，当然对于异步加载的模块而言，每个异步加载的模块都对应一个chunk。
 
-* hash：对应整个应用的hash值，打包后的所有文件共用一个hash；
-* chunkhash：对应每个chunk自己的hash，不同的chunk对应的hash不同；
-* contenthash：
+* hash：和整个项目的构建相关，只要项目文件有修改，整个项目构建的hash值就会更改；
+* chunkhash：和webpack打包的chunk有关，不同的entry会生成不同的chunkhash值，在打包过程中需要保证一个entry中的内容发生了变化，并不会影响其他entry的文件指纹，这就需要用到chunkhash，来保证每个entry的文件指纹的独立；
+* contenthash：根据文件内容来定义hash，文件内容不变，则contenthash不变。
 
-### 使用场景
+## 文件指纹使用场景
+### js文件指纹设置
+对于js文件一般采用chunkhash。
 ```js
 entry: {
     index: './src/index.js',
     vender: ['vue', 'vuex']
 },
 output: {
-    filename: "[name].[chunkhash].js", // 改为 chunkhash
+    filename: '[name].[chunkhash:8].js', // 改为chunkhash
 }
 ```
 在有多个入口文件时，一般会将一些第三方包打包成`vender`一个单独的`chunk`。因为这些包的源码，只要我们不升级是不发生变化的，而`index`对应的chunk是我们的业务代码，是经常发生变化的，因此对于多个入口的话，需要采用`chunkhash`。
 
+::: warning
+需要注意chunkhash不能与热更新插件HotModuleReplacementPlugin一同使用。
+:::
+### css文件指纹设置
+对于css文件采用contenthash而不是使用chunkhash，原因在于：假如一个页面同时使用了js和css，但是只有js发生了改变，而css并未发生改变，那么css文件的文件指纹也会发生变化。
+```js
+plugins: [
+    new MiniCssExtractPlugin({
+        filename: '[name].[contenthash:8].css'
+    })
+]
+```
+### 图片或者字体的文件指纹设置
+```js
+{
+    test: /\.(png|jpg|gif|svg|jpeg)$/,
+    use: {
+        loader: 'url-loader',
+        options: {
+            limit: 10240,
+            name: 'img/[name].[hash:8].[ext]'
+        }
+    }
+}
+```
+| 占位符名称        | 含义          |
+| ------------- |:-------------:|
+| [ext]      | 资源后缀名 |
+| [name]      | 文件名称    |
+| [path] |  文件的相对路径     |
+| [folder] |  文件所在的文件夹     |
+| [contenthash] |  文件的内容hash，默认是md5生成     |
+| [hash] |  文件的内容Hash(默认32位，一般取前8位)，默认是md5生成     |
+| [emoji] |  一个随机的指代文件内容的emoji     |
 ### runtimeChunk
->runtimeChunk: 将wenpack相关代码单独打包。在有新的模块加入的时候，webpack会给新模块增加一个id，
+runtimeChunk: 将webpack相关代码单独打包。在有新的模块加入的时候，webpack会给新模块增加一个id。
 
 ```js
 runtimeChunk: true
+```
+## 代码压缩
+### html压缩
+修改`html-webpack-plugin`，设置压缩参数。
+```js
+new HtmlWebpackPlugin({
+    template: path.join(__dirname, 'src/index.html'),
+    filename: 'search.html',
+    chunks: ['search'], // 指定要使用的chunk
+    inject: true, // 自动注入打包后的chunk
+    minify: {
+        html5: true,
+        collapseWhitespace: true,
+        preserveLineBreaks: false,
+        minifyCSS: true,
+        minifyJS: true,
+        removeComments: false
+    }
+})
+```
+### js压缩
+在webpack4.x版本中，内置了`uglifyjs-webpack-plugin`。因此，生产环境下打包后的js代码默认就是压缩过的。当然，我们也可以安装`uglifyjs-webpack-plugin`插件，并为其设置一些参数，比如开启并行压缩等。
+### css压缩
+在webpack4.x版本中，压缩css需要使用`optimize-css-assets-webpack-plugin`插件，同时使用cssnano。
+```js
+yarn add optimize-css-assets-webpack-plugin -D
 ```
 ## sourse-map中eval、cheap、inline和module的区别
 
