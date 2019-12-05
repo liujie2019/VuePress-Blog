@@ -9,6 +9,7 @@ title: 标题
 <Valine></Valine>
 
 
+![](https://github.com/liujie2019/static_data/blob/master/img/20191205171235.png?raw=true)
 <img :src="$withBase('/foo.png')" alt="">
 
 举个🌰：
