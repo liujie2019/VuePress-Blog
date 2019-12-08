@@ -23,6 +23,7 @@ module.exports = [
         { text: 'Mysql', link: '/backend/mysql/'},
         { text: 'MongoDB', link: '/backend/mongodb/'},
         { text: 'Nginx', link: '/backend/nginx/'},
+        { text: 'HTTP协议', link: '/backend/http/'},
       ]
     }, {
         text: '每日一题',

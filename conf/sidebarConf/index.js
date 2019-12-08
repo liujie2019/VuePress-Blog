@@ -29,6 +29,7 @@ const koa = require('./backend/koa/index.js');
 const mongodb =require('./backend/mongodb/index.js');
 const mysql = require('./backend/mysql/index.js');
 const nginx = require('./backend/nginx/index.js');
+const http = require('./backend/http/index.js');
 
 // 数据结构与算法
 const algorithm = require('./algorithm/index.js');
@@ -82,6 +83,7 @@ module.exports = {
   '/backend/mongodb/': mongodb,
   '/backend/mysql/': mysql,
   '/backend/nginx/': nginx,
+  '/backend/http/': http,
 
   // 工具 tools
 //   '/tools/git/': git,
