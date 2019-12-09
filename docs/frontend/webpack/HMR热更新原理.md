@@ -4,3 +4,31 @@ title: HMR热更新原理
 ::: tip
 写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
 :::
+## 模块热替换编译构建过程分析
+在命令行中通过运行`yarn run dev`命令启动项目后，可以看到控制台中有如下输出：生成了本次构建的Hash值`f092bc9c4112c5229963`。
+![](https://github.com/liujie2019/static_data/blob/master/img/20191209224850.png?raw=true)
+
+当对项目代码进行修改并保存后，控制台会出现Compiling提示，说明修改代码触发了新的代码编译。在控制台中可以看到新的构建输出：
+* 新的Hash值：ac435661fe2995f334fb
+* 新的json文件：f092bc9c4112c5229963.hot-update.json
+* 新的js文件：main.f092bc9c4112c5229963.hot-update.js
+
+![](https://github.com/liujie2019/static_data/blob/master/img/20191209225353.png?raw=true)
+
+
+![](https://github.com/liujie2019/static_data/blob/master/img/20191209225829.png?raw=true)
+
+首先看json文件，返回的结果中，h代表本次新生成的Hash值，用于下次文件热更新请求的前缀。c表示当前要热更新的文件对应的是index模块。
+再看下生成的js文件，那就是本次修改的代码，重新编译打包后的。
+![](https://github.com/liujie2019/static_data/blob/master/img/20191209225942.png)
+
+需要注意：如果没有对代码进行修改，直接保存，在控制台中也会输出相应的编译打包信息。具体结果如下：
+![](https://github.com/liujie2019/static_data/blob/master/img/20191209230314.png)
+由上图结果可以看出，即便是没有对代码进行修改，也会生成新的Hash值(需要注意：以前版本中如果没有修改代码直接保存的话，hash值是不会变化的)和新的json文件，但是并不会生成新的js文件。
+
+![](https://github.com/liujie2019/static_data/blob/master/img/20191209230348.png)
+通过观察浏览器发出的请求响应结果，可以看到c值为空，说明本次构建没有需要更新的代码。
+
+
+## 参考文档
+1. [轻松理解webpack热更新原理](https://juejin.im/post/5de0cfe46fb9a071665d3df0)
