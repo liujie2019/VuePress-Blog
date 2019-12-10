@@ -10,7 +10,7 @@ title: 标题
 
 
 ![](https://github.com/liujie2019/static_data/blob/master/img/20191205171235.png?raw=true)
-<img :src="$withBase('/foo.png')" alt="">
+<img :src="$withBase('/algorithm/foo.png')" alt="">
 
 举个🌰：
 来看个🌰：

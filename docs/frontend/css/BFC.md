@@ -25,7 +25,7 @@ BFC（Block Formatting Context）即块级格式化上下文，是网页CSS视�
 所以无论何时，当要创建一个BFC时，我们要基于需求选择最恰当的样式。
 ## BFC可以解决什么问题
 ### 清除浮动
->解决浮动元素使得父元素高度塌陷的问题。
+解决浮动元素使得父元素高度塌陷的问题。
 
 我们知道给父元素设置overflow:hidden可以清除子元素的浮动，但是不知道原理是什么。现在学习了BFC后，理解了**其原理：** 当在父元素中设置**overflow:hidden时就会触发BFC**，所以父元素内部的子元素就不会影响外面的布局，BFC就把浮动的子元素高度当做了自己内部的高度去处理溢出，所以外面看起来是清除了浮动。
 **Demo:**
@@ -60,7 +60,7 @@ BFC（Block Formatting Context）即块级格式化上下文，是网页CSS视�
 </body>
 </html>
 ```
->除了给父元素设置overflow:hidden，设置如下的任意一个都可以触发BFC，达到清除浮动的效果。
+除了给父元素设置overflow:hidden，设置如下的任意一个都可以触发BFC，达到清除浮动的效果。
 ```css
 // position
 position: absolute;
@@ -83,9 +83,9 @@ overflow: overlay;
 同一个块格式化上下文中的相邻块级盒之间的**垂直margin**会合并，**水平方向上margin不合并**。
 margin会产生合并(**经测试只会发生垂直margin的合并，左右的margin不会发生合并**)的情况有2种：一种是兄弟元素之间，一种是父元素和子元素之间。
 #### 方法1(解决兄弟元素之间的margin合并)
->给发生margin重叠的元素添加一个父元素，并触发父元素的BFC。
+给发生margin重叠的元素添加一个父元素，并触发父元素的BFC。
+<img :src="$withBase('/css/bfc.png')" alt="">
 
-![589aebe1b86286c1c9a2ff527172c7b2.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p1150)
 ```html
 <style>
     .outer {

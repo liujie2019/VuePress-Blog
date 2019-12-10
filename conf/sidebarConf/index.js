@@ -22,6 +22,7 @@ const vue = require('./frontend/vue/index.js');
 const webpack4 = require('./frontend/webpack4/index.js');
 const typescript = require('./frontend/ts/index.js');
 const react = require('./frontend/react/index.js');
+const web = require('./frontend/web/index.js');
 
 // 后端
 const nodejs = require('./backend/nodejs/index.js');
@@ -76,6 +77,7 @@ module.exports = {
   '/frontend/webpack4/': webpack4,
   '/frontend/babel/': babel,
   '/frontend/typescript/': typescript,
+  '/frontend/web/': web,
 
   // 后端 backend
   '/backend/nodejs/': nodejs,

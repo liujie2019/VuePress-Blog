@@ -15,7 +15,6 @@ title: HMR热更新原理
 
 ![](https://github.com/liujie2019/static_data/blob/master/img/20191209225353.png?raw=true)
 
-
 ![](https://github.com/liujie2019/static_data/blob/master/img/20191209225829.png?raw=true)
 
 首先看json文件，返回的结果中，h代表本次新生成的Hash值，用于下次文件热更新请求的前缀。c表示当前要热更新的文件对应的是index模块。

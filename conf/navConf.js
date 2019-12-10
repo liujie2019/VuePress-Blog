@@ -13,7 +13,8 @@ module.exports = [
         { text: 'Babel', link: '/frontend/babel/'},
         { text: 'Webpack', link: '/frontend/webpack/'},
         { text: 'Webpack4配置实战', link: '/frontend/webpack4/'},
-        { text: '每天学点typescript', link: '/frontend/typescript/'}
+        { text: '每天学点typescript', link: '/frontend/typescript/'},
+        { text: '浏览器相关', link: '/frontend/web/'}
       ]
     }, {
       text: '服务端积累',
