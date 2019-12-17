@@ -2,7 +2,7 @@
 home: true
 lang: zh-CN
 heroText: 前端进阶之路
-heroImage: /background.png
+heroImage: /rendering.gif
 actionText: 快速上手 →
 actionLink: /frontend/javascript/
 features:

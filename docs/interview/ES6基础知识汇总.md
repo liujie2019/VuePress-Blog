@@ -5,6 +5,7 @@ title: ES6基础知识点汇总
 ## 2. 原型继承和Class继承
 主要涉及：原型如何实现继承？Class如何实现继承？ES5继承与ES6继承的区别？Class 本质是什么？
 
+1. ES5的继承，实质是先创造子类的实例对象this，然后再将父类的方法添加到this上面(Parent.apply(this))。ES6的继承机制完全不同，实质是先将父类实例对象的属性和方法，加到this上面(所以必须先调用super方法)，然后再用子类的构造函数修改this。
 ```js
 class Person {}
 console.log(Person instanceof Function); // true
