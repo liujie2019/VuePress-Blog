@@ -4,7 +4,6 @@ title: Async/Await
 ::: tip
 写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
 :::
-
 Async/Await是ECMAScript新引入的语法，能够极大地简化异步程序的编写，下面主要来介绍一下`Async/Await`的用法以及与传统方式的对比，通过样例体现了`Async/Await`的优势。
 
 async函数是Generator函数的语法糖。使用关键字async来表示，在函数内部使用await来表示异步。相较于Generator，async函数的改进在于下面几点：
@@ -12,11 +11,10 @@ async函数是Generator函数的语法糖。使用关键字async来表示，在�
 1. **内置执行器**：`Generator`函数的执行必须依靠执行器，而async函数自带执行器，**调用方式跟普通函数的调用一样**；
 2. **更好的语义**：`async和await`相较于`* 和yield`更加语义化；
 3. **更广的适用性**：co模块约定，`yield`命令后面只能是`Thunk`函数或`Promise`对象。而`async`函数的`await`命令后面则可以是`Promise`或者原始类型的值(Number，string，boolean，但这时等同于同步操作)；
-4. **返回值是Promise**：`async`函数返回值是`Promise`对象，比`Generator`函数返回的`Iterator`对象方便，可以直接使用`then()`方法进行调用。
+4. **返回值是Promise**：`async`函数返回值是`Promise`对象(默认是成功态，并且把该函数的返回值传给then的第一个参数)，比`Generator`函数返回的`Iterator`对象方便，可以直接使用`then()`方法进行调用。
 5. **代码逻辑更清晰**：`async/await`的优势在于能更好的处理`then`链，特别是有多个`Promise`组成的`then`链的时候，优势就体现出来了。
 
 async是ES7新出的特性，**表明当前函数是异步函数**，不会阻塞线程导致后续代码停止运行。
-
 ```js
 const asyncFn = async () => {
     return '我后执行'
@@ -30,7 +28,131 @@ console.log('我先执行');
 我后执行
 ```
 虽然是上面asyncFn()先执行，但是已经被定义异步函数了，不会影响后续函数的执行。
-
+```js
+console.log(2);
+async function fn() {
+    console.log(1);
+    // await会把其下面的代码变成微任务，是异步的
+    await '等待';
+    console.log(3);
+}
+fn();
+console.log(4);
+// 运行结果：
+2
+1
+4
+3
+```
+```js
+function bar() {
+    console.log(5);
+}
+console.log(2);
+async function fn() {
+    console.log(1);
+    // await会把下面的代码变成微任务，是异步的
+    await bar(); // bar函数会同步执行
+    console.log(3);
+}
+fn();
+console.log(4);
+// 运行结果：
+2
+1
+5
+4
+3
+```
+```js
+function bar() {
+    return new Promise((resolve, reject) => {
+        console.log(5);
+    });
+}
+console.log(2);
+async function fn() {
+    console.log(1);
+    // await会把下面的代码变成微任务，是异步的
+    await bar();
+    console.log(3);
+}
+fn();
+console.log(4);
+// 运行结果：
+2
+1
+5
+4
+```
+```js
+function bar() {
+    return new Promise((resolve, reject) => {
+        console.log(5);
+        resolve();
+    });
+}
+console.log(2);
+async function fn() {
+    console.log(1);
+    // await会把下面的代码变成微任务，是异步的
+    await bar();
+    // await下面的代码受bar函数返回的Promise实例的状态影响
+    console.log(3);
+}
+fn();
+console.log(4);
+// 运行结果：
+2
+1
+5
+4
+3
+```
+::: tip
+通过上述3个例子可以看出：如果bar函数返回的是一个非Promise值，则微任务中代码会立即执行；如果返回Promise实例，则会等到Promise状态变化后(变为成功态)才会执行。
+:::
+```js
+function bar() {
+    return new Promise((resolve, reject) => {
+        console.log(5);
+        setTimeout(() => {
+            resolve();
+        }, 1000);
+    });
+}
+console.log(2);
+async function fn() {
+    console.log(1);
+    // await会把下面的代码变成微任务，是异步的
+    await bar();
+    // 如果bar函数执行中有异步，那么await下面的代码会等到函数中的异步执行完毕后，才会执行这个微任务
+    console.log(3);
+}
+fn();
+console.log(4);
+```
+```js
+function bar(time) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve();
+        }, time);
+    });
+}
+console.log(2);
+async function fn() {
+    console.log(1);
+    // await会把下面的代码变成微任务，是异步的
+    await bar(1000);
+    await bar(3000);
+    // 4秒后才会输出3
+    // 如果bar函数执行中有异步，那么await下面的代码会等到函数中的异步执行完毕后，才会执行这个微任务
+    console.log(3);
+}
+fn();
+console.log(4);
+```
 ```js
 const asyncFn = async () => {
     return '我后执行'
@@ -44,7 +166,6 @@ Promise {<resolved>: "我后执行"}
 ::: warning
 需要注意：async函数返回的是一个Promise对象。async函数（包含函数语句、函数表达式、Lambda表达式）会返回一个`Promise`对象，如果在函数中return一个直接量，`async`会把这个直接量通过`Promise.resolve()`封装成`Promise`对象。该Promise对象，最终resolve的值就是在函数中return的直接量的内容。
 :::
-
 ## async和await
 先从字面意思来理解，`async`是异步的简写，而`await`可以认为是`async wait`的简写。所以应该很好理解，`async`用于申明一个函数是异步的，而`await`用于等待一个异步方法执行完成。
 ## async-await和Promise的关系

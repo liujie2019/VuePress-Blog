@@ -9,96 +9,76 @@ title: Promise
 Promise对象用于异步计算，表示一个现在、将来或永不可能可用的值。
 
 ### Promise用途
-
 * `Promise`主要用于异步计算；
 * 可以将异步操作队列化，按照期望的顺序执行，返回符合预期的结果；
 * 可以在对象之间传递和操作`Promise`，帮助我们处理队列。
 
+Promise将多个异步回调改写成同步形式：
 ```js
-new Promise(
-	/*执行器 executor*/
-	function (resolve, reject) {
-		//一段耗时很长的异步操作
-		resolve(); //数据处理完成
-		reject(); //数据处理出错
-	}
-).then(function A() {
-	// 成功，下一步
-}, function B() {
-	// 失败，做相应处理
+// Promise将异步回调以同步的形式展现出来
+Promise.then(() => {
+    // 如果返回一个Promise实例。下一个then中回调会受上一个Promise的状态影响。
+    return new Promise();
+}).then(() => {
+    return new Promise();
+}).then(() => {
+    // 其它操作
 });
 ```
-
 状态响应函数可以返回新的Promise或其他值。如果返回新的Promise，那么下一级的`then()`会在新Promise状态改变之后执行。如果返回其它任何值，则会立刻执行下一级`then()`。
 
-
->`Promise`产生的原因？
-
-![3235bd99b94781591c6856bd5259487a.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p520)
+`Promise`产生的原因？
 
 浏览器中的`javascript`
-
 1. 异步操作以事件为主。
 2. 回调主要出现在`ajax`和`file api`
 
 node.js
-
 1. 无阻塞高并发，是Node.js的招牌。
 2. 异步操作是其保障。
 3. 大量操作依赖回调函数。
 
->异步回调的问题：陷入回调地域。
-
-![91d937f27cf21dc0595e11e5e47bd80c.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p521)
-
->异步回调有四个问题：
-
-* 嵌套层次很深，难以维护；
+异步回调有四个问题：
+* 嵌套层次很深，难以维护，最终陷入陷入回调地狱；
 * 无法正常使用`return和throw`；
 * 无法正常检索堆栈信息；
-* 多个回调之间难以建立联系
+* 多个回调之间难以建立联系。
 
 ## Promise简介
 ```js
 new Promise(
-    // 执行器 executor
-    function (resolve, reject) {
-        // 一段耗时很长的异步操作
-        resolve(); // 数据处理完成
-        reject(); // 数据处理出错
-    }
-).then(
-    function A() {
-        // 成功，下一步
-    },
-    function B() {
-        // 失败，做相应处理
-    }
-);
+	/*执行器 executor*/
+	(resolve, reject) => {
+		//一段耗时很长的异步操作
+		resolve(); //数据处理完成
+		reject(); //数据处理出错
+	}
+).then(() => {
+	// 成功，下一步
+}, () => {
+	// 失败，做相应处理
+});
 ```
->`Promise`是一个代理对象，它和原先要进行的操作并无关系；`Promise`通过引入一个回调，避免更多的回调。
+`Promise`是一个代理对象，它和原先要进行的操作并无关系；`Promise`通过引入一个回调，避免更多的回调。
 
->`Promise`对象通过自身的状态，来控制异步操作。`Promise`有3个状态：
-
+`Promise`对象通过自身的状态，来控制异步操作。`Promise`有3个状态：
 * pending：异步操作未完成；
 * fulfilled：异步操作成功；
 * rejected：异步操作失败；
 
->需要注意：上面三种状态里面，`fulfilled和rejected`合在一起称为`resolved`（已定型），这三种的状态的变化途径只有两种。
+需要注意：上面三种状态里面，`fulfilled和rejected`合在一起称为`resolved`，这三种的状态的变化途径只有两种。
 
-1. 从“未完成”到“成功”；
-2. 从“未完成”到“失败”。
+1. 从未完成到成功；
+2. 从未完成到失败。
 
->`Promise`状态发生改变，就会触发`.then()`里的响应函数处理后续步骤；`Promise`一旦状态发生变化，就凝固了，不会再有新的状态变化。这也是 `Promise`这个名字的由来，它的英语意思是“承诺”，一旦承诺成效，就不得再改变了。这也意味着，`Promise`实例的状态变化只可能发生一次。
+`Promise`状态发生改变，就会触发`.then()`里的响应函数处理后续步骤；`Promise`一旦状态发生变化，就凝固了，不会再有新的状态变化。这也是 `Promise`这个名字的由来，它的英语意思是“承诺”，一旦承诺成效，就不得再改变了。这也意味着，`Promise`实例的状态变化只可能发生一次。
 
 因此，Promise 的最终结果只有两种。
 
 * 异步操作成功，`Promise`实例传回一个值（`value`），状态变为`fulfilled`；
 * 异步操作失败，`Promise`实例抛出一个错误（`error`），状态变为`rejected`。
 
-![5f6d7fb8bd7987bd4a05e978457e30e0.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p522)
->需要注意：每一个then都会返回一个新的Promise。
-
+需要注意：每一个then都会返回一个新的Promise。
 ```js
 console.log('here we go');
 new Promise(resolve => {
@@ -109,7 +89,7 @@ new Promise(resolve => {
     console.log(value + ' world');
   });
 ```
->两步执行：
+两步执行：
 ```js
 console.log('here we go');
 new Promise(resolve => {
@@ -127,14 +107,13 @@ new Promise(resolve => {
    console.log(value + ' world');
 });
 ```
->结果如下：
+结果如下：
 ```js
 here we go
 hello
 world world
 ```
->Promise在队列中的应用：在任何地方生成了一个promise队列之后，我们可以把它作为一个变量传递到其他地方，如果我们的操作是队列的状态，即先进先出的状态，就可以在后面追加任意多的then，不管之前的队列是完成还是没有完成，队列都会按照顺序完成。
-
+Promise在队列中的应用：在任何地方生成了一个promise队列之后，我们可以把它作为一个变量传递到其他地方，如果我们的操作是队列的状态，即先进先出的状态，就可以在后面追加任意多的then，不管之前的队列是完成还是没有完成，队列都会按照顺序完成。
 ```js
 console.log('start');
 
@@ -151,21 +130,20 @@ setTimeout(() => {
     });
 });
 ```
->结果：
+结果：
 ```js
 start
 the promise fulfilled
 hello
 ```
->promise在then中不返回promise实例对象，将会执行下一步操作，即使返回值为false，false将会作为返回值传递到相应的then函数中。
+promise在then中不返回promise实例对象，将会执行下一步操作，即使返回值为false，false将会作为返回值传递到相应的then函数中。
 ```js
 console.log('here we go');
 new Promise(resolve => { // 执行1
     setTimeout(() => {
       resolve('hello');
     }, 2000);
-  })
-    .then(value => {
+  }).then(value => {
       console.log(value);  // 执行2
       console.log('everyone');
       (function() { // 执行5。1、这段代码中没有返回新的值，下面一行返回的promise实际是在这个函数中返回的，不是在then的响应函数中返回的，then返回的promise实例就没有等待里面的这个promise完成。2、一直在等待执行，等最后的then返回之后，再执行这个函数。3、没有进入promise队列中，但是进程仍然是登它执行完成后才算是完成。
@@ -184,8 +162,7 @@ new Promise(resolve => { // 执行1
     })
 ```
 
-## .then()
-
+## then方法
 * .then()接受两个函数作为参数，分别代表fulfilled和rejected；
 * .then()返回一个新的Promise实例，所以它可以链式调用；
 * 当前面的Promise状态改变时，.then()根据其最终状态，选择特定的状态响应函数执行。
@@ -202,8 +179,7 @@ new Promise( resolve => {
     setTimeout(() => {
         resolve(100);
     }, 1000);
-})
-    .then(value => {
+}).then(value => {
         console.log(value);
         return new Promise(resolve => {
             console.log('Step 1-1');
@@ -236,25 +212,80 @@ Step 1-3
 110
 Step 2
 ```
+### then中抛出错误
+```js
+console.log(200);
+const p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        console.log(a); // Uncaught ReferenceError: a is not defined
+    }, 100);
+    // reject();
+    console.log(100);
+});
 
+p.then(() => {
+    console.log('成功');
+}, () => {
+    // 在then中的函数如果抛出异常，或者是报错，浏览器不会报错，而是直接走reject
+    console.log('111');
+}).then(() => {
+    console.log('成功2');
+}, () => {
+    console.log('失败');
+});
+console.log(300);
+```
+输出：
+```js
+200
+100
+300
+ReferenceError: a is not defined
+```
+```js
+console.log(200);
+const p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        reject();
+    }, 100);
+    console.log(100);
+});
+
+p.then(() => {
+    console.log('成功');
+}, () => {
+    // 在then中的函数如果抛出异常，或者是报错，浏览器不会报错，而是直接走reject
+    console.log(a);
+}).then(() => {
+    console.log('成功2');
+}, () => {
+    console.log('失败');
+});
+console.log(300);
+```
+输出：
+```js
+200
+100
+300
+失败
+```
 ## 错误处理
 Promise会自动捕获内部异常，并交给`rejected`响应函数处理-catch捕获。
->推荐使用catch捕获
+推荐使用catch捕获
 ```js
 console.log('here we go');
 new Promise( resolve => {
     setTimeout( () => {
         throw new Error('bye');
     }, 2000);
-})
-    .then( value => {
-        console.log( value + ' world');
-    })
-    .catch( error => {
-        console.log( 'Error：', error.message);
-    });
+}).then( value => {
+    console.log( value + ' world');
+}).catch( error => {
+    console.log( 'Error：', error.message);
+});
 ```
->Promise会自动捕获内部异常，并交给rejected响应函数处理-reject响应捕获：
+Promise会自动捕获内部异常，并交给rejected响应函数处理-reject响应捕获：
 ```js
 console.log('here we go');
 new Promise((resolve, reject) => {
@@ -316,8 +347,7 @@ I catch： Error: test error
 No, I catch： Error: another error
     at Promise.then.catch.err (/Users/liujie26/study/FE-study-notes/sources/css-test/promise-test/catch-then.js:14:15)
 ```
-
->强烈建议在所有队列最后都加上`.catch()`，以避免漏掉错误处理造成意想不到的问题。
+强烈建议在所有队列最后都加上`.catch()`，以避免漏掉错误处理造成意想不到的问题。
 
 ```js
 doSomething()
