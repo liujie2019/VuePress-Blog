@@ -46,7 +46,7 @@ console.log(str.repeat(2)); // testtest
 6. every：数组中所有项都符合要求才返回true，否则返回false，有一项不满足就停止遍历。
 
 ::: warning
-需要注意：Array.from和Array.of都不是数组原型上的方法。
+需要注意：Array.from和Array.of都不是数组原型上的方法，是类的静态方法。
 :::
 ```js
 const arr = Array.of('a', 123, true);
