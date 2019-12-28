@@ -142,6 +142,8 @@ arr.every(item => {
     return false;
 });
 ```
+### Array.prototype.entries()
+Array.prototype.entries方法返回的是一个遍历器对象。类似的，Array.prototype.keys和Array.prototype.values都是返回的遍历器对象。
 ## 扩展运算符
 作用：
 * 快速生成一个新的数组

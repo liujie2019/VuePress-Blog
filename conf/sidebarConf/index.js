@@ -31,7 +31,8 @@ const mongodb =require('./backend/mongodb/index.js');
 const mysql = require('./backend/mysql/index.js');
 const nginx = require('./backend/nginx/index.js');
 const http = require('./backend/http/index.js');
-
+// 前端杂谈
+const blog = require('./blog/index.js');
 // 数据结构与算法
 const algorithm = require('./algorithm/index.js');
 // 每日一题
@@ -87,6 +88,7 @@ module.exports = {
   '/backend/nginx/': nginx,
   '/backend/http/': http,
 
+  '/blog/': blog,
   // 工具 tools
 //   '/tools/git/': git,
 //   '/tools/github/': github,

@@ -27,6 +27,9 @@ module.exports = [
         { text: 'HTTP协议', link: '/backend/http/'},
       ]
     }, {
+        text: '前端杂谈',
+        link: '/blog/'
+    }, {
         text: '每日一题',
         link: '/interview/'
     }, {
