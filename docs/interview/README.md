@@ -3,19 +3,18 @@ title: 题目汇总
 ---
 每日一题，砥砺前行。努力的人，运气一般不会差。
 ## html
-1.
-2. H5中新增了哪些标签？标签语义化的好处？
-3. 常见的行内元素和块级元素？两者的区别是什么？空(void)元素有那些？
-4. script标签中，defer、async属性与默认行为的区别是什么?
-5. cookies，sessionStorage和localStorage的区别？
-6. cookie和session的区别？
-7. 常见的浏览器内核有哪些？常见的浏览器的兼容性有哪些？原因和解决方法是什么？常用的hack技巧？
-8. html5有哪些新特性？如何处理html5新标签的浏览器兼容问题？
-9. 行内、块、空元素举例
-10. html标签举例
-11. Doctype作用？知道多少种Doctype文档类型？
-12. iframe的优缺点
-13. div+css的布局较table布局有什么优点
+1. H5中新增了哪些标签？标签语义化的好处？
+1. 常见的行内元素和块级元素？两者的区别是什么？空(void)元素有那些？
+2. script标签中，defer、async属性与默认行为的区别是什么?
+3. cookies，sessionStorage和localStorage的区别？
+4. cookie和session的区别？
+5. 常见的浏览器内核有哪些？常见的浏览器的兼容性有哪些？原因和解决方法是什么？常用的hack技巧？
+6. html5有哪些新特性？如何处理html5新标签的浏览器兼容问题？
+7. 行内、块、空元素举例
+8.  html标签举例
+9.  Doctype作用？知道多少种Doctype文档类型？
+10. iframe的优缺点
+11. div+css的布局较table布局有什么优点
 
 ## css
 1. 移动端适配1px的问题
@@ -45,7 +44,6 @@ title: 题目汇总
 
 ## 手写代码
 1. sum(2, 3)实现sum(2)(3)的效果
-2.
 ## Webpack
 1. webpack里面的插件是怎么实现的(阿里)
 2. dev-server是怎么跑起来(阿里)
@@ -68,7 +66,7 @@ title: 题目汇总
 5. vdom 的diff算法，如何对比的。
 6. vue-router
 7. vuex状态管理
-8. 看vue源码，看vue3.0有哪些更新的地方（个人）
+8. 看vue源码，看vue3.0有哪些更新的地方
 9. nextTick的原理
 10. computed和watch的区别？
 11. 组件间通信(父子通信，兄弟通信)

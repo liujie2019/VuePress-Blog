@@ -1,6 +1,7 @@
 ---
 title: ES6基础知识点汇总
 ---
+[TOC]
 ## 1. var、let及const区别
 ## 2. 原型继承和Class继承
 主要涉及：原型如何实现继承？Class如何实现继承？ES5继承与ES6继承的区别？Class 本质是什么？

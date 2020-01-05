@@ -1,5 +1,5 @@
 ---
-title: HTTP知识点汇总.md
+title: HTTP知识点汇总
 ---
 [TOC]
 ## 1. 什么是HTTP
