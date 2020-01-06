@@ -11,44 +11,82 @@ title: 题目汇总
 5. 常见的浏览器内核有哪些？常见的浏览器的兼容性有哪些？原因和解决方法是什么？常用的hack技巧？
 6. html5有哪些新特性？如何处理html5新标签的浏览器兼容问题？
 7. 行内、块、空元素举例
-8.  html标签举例
-9.  Doctype作用？知道多少种Doctype文档类型？
+8. html标签举例
+9. Doctype作用？知道多少种Doctype文档类型？
 10. iframe的优缺点
 11. div+css的布局较table布局有什么优点
-
 ## css
 1. 移动端适配1px的问题
 2. 介绍flex布局
 3. 其他css方式设置垂直居中
 4. 居中为什么要使用transform(为什么不使用marginLeft/Top)
+5. 盒模型
+6. 垂直居中方法
+7. 三栏布局
+8. 选择器权重计算方式
+9. 清除浮动的方法
+10. 什么是BFC、可以解决哪些问题
+11. position属性
+12. 如何实现一个自适应的正方形
+13. 如何用css实现一个三角形
 ## js
 1. 如何解决跨域的问题
 2. 观察者和发布-订阅的区别
 3. 介绍纯函数
 4. 如何设计一个localStorage，保证数据的实效性
 5. 两个对象如何比较
-## ES6
-1. var、let及const区别
-2. 介绍暂时性死区
-3. ES6中的map和原生的对象有什么区别
-4. Promise的使用与实现
-5. 设计实现Promise.all
-6. 解构赋值
-7. 声明类与继承：class、extend
-8. generator（异步编程、yield、next()、await 、async）
-9. 箭头函数this指向问题、拓展运算符
-10. map和set有没有用过，如何实现一个数组去重，map数据结构有什么优点？
-11. ES6怎么编译成ES5
-12. ES6转成ES5的常见例子
-13. 使用es5实现es6的class
-
+6. 事件循环机制
 ## 手写代码
 1. sum(2, 3)实现sum(2)(3)的效果
+2. 防抖和节流
+3. 深拷贝
+4. 数组去重、数组乱序
+5. 手写call、apply、bind
+6. 继承（ES5/ES6）
+7. sleep函数
+8. 实现promise
+9. 实现promise.all
+10. 实现promise.retry
+11. 将一个同步callback包装成promise形式
+12. 写一个函数，可以控制最大并发数
+13. jsonp的实现
+14. eventEmitter(emit,on,off,once)
+15. 实现instanceof
+16. 实现new
+17. 实现数组flat、filter等方法
+18. lazyMan
+19. 函数currying
+## ES6
+1. var、let及const区别
+2. 箭头函数与普通函数的区别
+3. 介绍暂时性死区
+4. ES6中的map和原生的对象有什么区别
+5. Promise的使用与实现
+6. 设计实现Promise.all
+7. 变量的解构赋值
+8. 声明类与继承：class、extend
+9. generator（异步编程、yield、next、await 、async）
+10. 箭头函数this指向问题、拓展运算符
+11. map和set有没有用过，如何实现一个数组去重，map数据结构有什么优点？
+12. ES6怎么编译成ES5
+13. ES6转成ES5的常见例子
+14. 使用es5实现es6的class
+15. promise、async await、Generator的区别
+16. ES6的继承与ES5相比有什么不同
+17. js模块化（commonjs/AMD/CMD/ES6）
 ## Webpack
 1. webpack里面的插件是怎么实现的(阿里)
 2. dev-server是怎么跑起来(阿里)
 3. 使用过webpack里面哪些plugin和loader(阿里)
 4. css-loader原理和过程
+5. 用过哪些loader和plugin
+6. loader的执行顺序为什么是后写的先执行
+7. webpack配置优化
+8. webpack打包优化（happypack、dll）
+9. plugin与loader的区别
+10. webpack执行的过程
+11. 如何编写一个loader、plugin
+12. tree-shaking作用，如何才能生效
 ## React
 1. 介绍JSX
 2. 介绍虚拟DOM
@@ -59,35 +97,49 @@ title: 题目汇总
 6. 介绍高阶组件
 7. react性能优化
 ## Vue
-1. vue生命周期
-2. 双向绑定原理，defindeProxy/proxy
-3. v-if 和 v-for
-4. v-for 里面，v-key的作用
-5. vdom 的diff算法，如何对比的。
+1. vue生命周期及对应的行为
+2. 双向绑定实现原理，defindeProxy/proxy
+3. v-if和v-for
+4. v-for里面，v-key的作用
+5. vdom的diff算法，如何对比的。
 6. vue-router
 7. vuex状态管理
 8. 看vue源码，看vue3.0有哪些更新的地方
-9. nextTick的原理
+9. nextTick的实现原理
 10. computed和watch的区别？
-11. 组件间通信(父子通信，兄弟通信)
+11. 组件间通信方法(父子通信，兄弟通信)
 12. keep-alive组件
-13. vue插件写过吗？
-
-## http
+13. vue插件写过吗？如何设计一个组件？
+14. vue父子组件生命周期执行顺序
+15. 如何实现一个指令
+16. diff算法
+17. 虚拟dom为什么快
+## HTTP
 1. 什么是HTTP？HTTP协议特点？
 2. HTTP报文组成
 3. HTTP请求过程
 4. TCP三次握手和四次挥手的理解
 5. 常见Http请求头(阿里)
 6.
-
 ## 浏览器
 1. 浏览器缓存机制
 2. 渲染机制及重绘和回流
 3. 用户输入url到页面呈现的过程
-
+4. 强缓存、协商缓存、CDN缓存
+5. HTTP2
+6. HTTP状态码
+7. 三次握手与四次挥手
+8. 跨域（JSONP/CORS）
+9. 跨域时如何处理cookie
+10. 垃圾回收机制
+## Web安全
+1. https
+2. 什么是xss，如何预防
+3. 什么是csrf，如何预防
+4. 为什么会造成csrf攻击
 ## 前端性能优化
-
+1. 首屏加载如何优化
+2. 一个网页从请求到呈现花了很长时间，如何排查
 ## Node
 
 ## linux
