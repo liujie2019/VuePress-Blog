@@ -10,7 +10,7 @@
   .c {
     position: relative;
     float: left;
-    right: 50%; //或设置left: -50%;
+    right: 50%; /*或设置left: -50%;*/
   }
 </style>
 <div class="box">
