@@ -1,15 +1,18 @@
 ---
 title: Node模块系统
 ---
+[TOC]
+* require：node和es6都支持的引入
+* export/import：只有es6支持的导出引入
+* module.exports/exports：只有node支持的导出
 ## 基本规则
 ### 导出多个成员
-main.js
+main.js：
 ```js
 const testExports = require('./test');
-
 console.log(testExports);
 ```
-test.js
+test.js：
 ```js
 const a = '123';
 const add = (x, y) => x + y;
@@ -23,7 +26,6 @@ module.exports.add = add;
 ::: tip
 总结：`module.exports`或者`exports`都是一个对象，我们可以通过多次为这个对象添加成员来实现对外导出多个内部成员。
 :::
-
 导出多个成员的另外一个方法：
 ```js
 const a = '123';
@@ -48,13 +50,44 @@ module.exports = a;
 // 这种写法不可以
 exports = a;
 ```
+::: warning
 需要注意：导出单个成员只能使用`module.exports`。
-
+:::
 ```js
 const testExports = require('./test');
 ```
-在导出多个成员时，`testExports`是一个对象，里面包含了导出的多个成员，想使用某个具体成员时，需要使用`testExports.成员名`的形式；导出单个成员时，导出什么，`testExports`就是什么，比如导出一个字符串，`testExports`就是字符串的值。
+* 导出多个成员时，`testExports`是一个对象，里面包含了导出的多个成员，想使用某个具体成员时，需要使用`testExports.成员名`的形式；
+* 导出单个成员时，导出什么，`testExports`就是什么，比如导出一个字符串，`testExports`就是字符串的值。
 
+Node在执行一个文件时，会给这个文件内生成一个exports和module对象，而module对象又有一个exports属性。他们之间的关系如下：
+```js
+// 指向同一块{}内存空间
+exports = module.exports = {};
+```
+来看个🌰：
+```js
+const a = 123;
+console.log(module.exports); // {}
+console.log(exports); // {}
+// 说明exports和module.exports是指向同一块内存空间
+console.log(exports === module.exports); // true
+
+exports.a = 200; // 这里同时将module.exports的内容给改为{ a: 200 }
+console.log(module.exports); // { a: 200 }
+console.log(exports); // { a: 200 }
+
+exports = '改变exports指向新的内存空间';
+console.log(module.exports); // { a: 200 }
+console.log(exports); // '改变exports指向新的内存空间'
+```
+```js
+// 加载并执行uitls.js
+const obj = require('./uitls');
+
+console.log(obj); // { a: 200 }
+```
+从上面的代码中可以看出，其实require引入的内容是**module.exports指向的内存块中的内容**，并不是exports的。
+简而言之，区分他们之间的区别就是exports只是module.exports的引用，辅助后者添加内容用的，最终真正导出的是module.exports。
 ## 模块原理
 ### 原理解析(exports和module.exports区别)
 ```js
@@ -118,14 +151,100 @@ exports.fn = '我是一个变量';
 // 前面再牛逼，在这里都全部推翻了，重新赋值，最终得到的是[Function]
 module.exports = () => console.log('我是一个函数');
 ```
-### exports和export default区别
+## exports和export default区别
+1. export与export default均可用于导出常量、函数、文件、模块等；
+2. 在一个文件或模块中，export、import可以有多个，export default仅有一个；
+3. 通过export方式导出，在导入时要加{}，export default则不需要；
+4. export能直接导出变量表达式，export default不行；
+5. 模块中通过export导出的(属性或者方法)可以修改，但是通过export default导出的不可以修改。
 
+来看个🌰：
+testES6Export.js：
+```js
+// 导出变量
+export const a = 123;
+
+// 导出方法-方式1
+export function sayName() {
+    console.log('lisi');
+}
+
+// 导出方法-方式2
+function sayAge() {
+    console.log(12);
+}
+
+export {sayAge};
+
+// export default导出
+const b = 321;
+// export default const b = 321; 不支持这样书写
+export default b;
+```
+index.js：
+```js
+import {sayName, sayAge} from './testES6Export';
+import b from './testES6Export';
+// as导出是把零散的export聚集在一起作为一个对象，而export default是导出为对象的default属性。
+import * as testModule from './testES6Export';
+
+console.log(b);
+sayName();
+sayAge();
+console.log(testModule);
+console.log(testModule.b); // undefined
+console.log(testModule.default); // 321
+console.log(testModule.a); // 123
+```
+```js
+// 执行以下两个命令
+npx babel ./src -d ./dist
+browserify ./dist/index.js -o ./dist/build.js
+```
+结果如下：
+<img :src="$withBase('/js/es-module.png')" alt="">
+
+再来看个🌰：
+```js
+let a = '123';
+let b = '456';
+export {a};
+export default b;
+a = '123456';
+b = '456123';
+```
+index.js：
+```js
+import b, {a} from './testES6Exports2';
+console.log(a); // 123456
+console.log(b); // 456
+```
+从上述例子中可以看出，export是绑定到标识符，改变标识符的值，然后访问这个绑定，得到的是新值；export default绑定的是标识符指向的值，如果修改标识符指向另一个值，这个绑定的值不会发生变化。
+```js
+let a = '123';
+let b = '456';
+export {a};
+export default b;
+// 异步修改a的值
+setTimeout(() => {
+    a = '123456';
+}, 1000);
+b = '456123';
+```
+index.js：
+```js
+import b, {a} from './testES6Exports2';
+console.log(a); // 123
+// 异步读取a变化后的值
+setTimeout(() => {
+    console.log(a); // 123456
+}, 3000);
+console.log(b); // 456
+```
 ## 模块加载和导出
 在Node中，**没有全局作用域**，**只有模块作用域**(简单来讲就是文件作用域)。模块作用域：文件外部访问不到内部，内部也访问不到外部。
 
-在Node中，只能通过require方法来加载执行多个js脚本文件
-。require加载只能是执行其中的代码，文件与文件之间由于是模块作用域，所以不会有污染的问题。
-
+在Node中，只能通过require方法来加载执行多个js脚本文件。require加载只能是执行其中的代码，文件与文件之间由于是模块作用域，所以不会有污染的问题。
 * 模块完全是封闭的
 * 外部无法访问内部
 * 内部也无法访问外部
@@ -204,9 +323,7 @@ module.exports = () => console.log('我是一个函数');
 ```js
 const template = require('art-template');
 ```
-
 查找规则如下：
-
 * 先找到当前文件所处目录中的node_modules目录；
 * 找到node_modules/art-template;
 * 找到node_modules/art-template/package.json;
@@ -230,3 +347,5 @@ const template = require('art-template');
     * 按照这个规则依次往上找，直到磁盘根目录还找不到，最后报错：Can not find moudle xxx
 
 需要注意：我们一个项目有且只有一个`node_modules`，放在项目根目录中，这样的话项目中所有的子目录中的代码都可以加载到第三方包。
+## 参考文档
+1. [Node.js 模块系统源码探微](https://juejin.im/post/5dec60e8f265da33d645a631)
