@@ -4,6 +4,7 @@ title: Webpack原理
 ::: tip
 写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
 :::
+[TOC]
 ## 基本概念
 在学习Webpack原理前，我们需要掌握以下几个核心概念，以方便后面的理解：
 
@@ -28,7 +29,6 @@ Webpack 的运行流程是一个串行的过程，从启动到结束会依次执
 
 ## 流程细节
 Webpack 的构建流程可以分为以下三大阶段：
-
 1. **初始化**：启动构建，读取与合并配置参数，加载 Plugin，实例化 Compiler。
 2. **编译**：从 Entry 发出，针对每个 Module 串行调用对应的 Loader 去翻译文件的内容，再找到该 Module 依赖的 Module，递归地进行编译处理。
 3. **输出**：将编译后的 Module 组合成 Chunk，将Chunk 转换成文件，输出到文件系统中。
