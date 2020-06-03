@@ -78,15 +78,15 @@ async function path2Filenames(filenames, docsPath, targetDirs) {
  * @param {*} filenames
  */
 function formatFilenames(filenames) {
-  return filenames
-    .map(file => {
-      if (file === 'README.md') {
-        return '';
-      } else {
-        return file.replace('.md', '');
-      }
-    })
-    .sort();
+    filenames = filenames.filter(filename => filename !== 'assets');
+    return filenames
+        .map(file => {
+        if (file === 'README.md') {
+            return '';
+        } else {
+            return file.replace('.md', '');
+        }
+        }).sort();
 }
 /**
  * 写入
