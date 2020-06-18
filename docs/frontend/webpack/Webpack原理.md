@@ -4,7 +4,6 @@ title: Webpack原理
 ::: tip
 写作不易，Star是最大鼓励，感觉写的不错的可以给个Star⭐，请多多指教。[本博客的Github地址](https://github.com/liujie2019/VuePress-Blog)。
 :::
-[TOC]
 ## 基本概念
 在学习Webpack原理前，我们需要掌握以下几个核心概念，以方便后面的理解：
 
@@ -47,7 +46,8 @@ Webpack 的构建流程可以分为以下三大阶段：
 ![e31d945ad2cc008e877e17a081422239.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p106)
 ### 输出阶段
 ![4878cb79aa108dec5e4674e7a67a2621.png](evernotecid://AC85336C-B325-443E-8ED7-E6554790A944/appyinxiangcom/10797539/ENResource/p107)
->在输出阶段已经得到了各个模块经过转换后的结果和其依赖关系，并且把相关模块组合在一起形成一个个 Chunk。 在输出阶段会根据 Chunk 的类型，使用对应的模版生成最终要要输出的文件内容。
+
+在输出阶段已经得到了各个模块经过转换后的结果和其依赖关系，并且把相关模块组合在一起形成一个个 Chunk。 在输出阶段会根据 Chunk 的类型，使用对应的模版生成最终要要输出的文件内容。
 
 ## 输出文件分析
 ```js

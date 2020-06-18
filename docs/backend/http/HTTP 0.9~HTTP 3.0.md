@@ -1,7 +1,8 @@
 ---
 title: HTTP 0.9~HTTP 3.0
 ---
-<img :src="$withBase('/http/http.png')" alt="">
+
+![image](./assets/http.png)
 
 ## HTTP 0.9
 * 只允许客户端发送GET这一种请求；
@@ -14,10 +15,10 @@ title: HTTP 0.9~HTTP 3.0
 * 请求与响应支持头域；
 
 请求头内容：
-<img :src="$withBase('/http/http2.png')" alt="">
+![image](./assets/http2.png)
 
 响应头内容：
-<img :src="$withBase('/http/http3.png')" alt="">
+![image](./assets/http3.png)
 
 注意：
 * expires 是响应头内容，返回一个固定的时间,缺陷是时间到了服务器要重新设置；
@@ -41,7 +42,8 @@ Connection: keep-alive
 一个可以复用的TCP连接就建立了，直到客户端或服务器主动关闭连接。但是，这不是标准字段，不同实现的行为可能不一致，因此不是根本的解决办法。
 ## HTTP/1.1
 请求头增加 Cache-Control
-<img :src="$withBase('/http/http4.png')" alt="">
+
+![image](./assets/http4.png)
 
 >注意：Cache-Control 的 max-age 返回是缓存的相对时间 Cache-Control 优先级比 expires 高 缺点：不能第一时间拿到最新修改文件。
 
@@ -54,7 +56,6 @@ GET /demo.htm HTTP/1.1
 ```
 #### 请求方法
 请求方法用来定义操作资源的方式，HTTP/1.1协议中定义了八种请求方法：
-
  - GET：读取资源数据;
  - POST：新建资源数据;
  - PUT：更新资源数据;
@@ -65,7 +66,6 @@ GET /demo.htm HTTP/1.1
  - CONNECT：HTTP/1.1 协议中预留给能够将连接改为管道方式的代理服务器。通常用于SSL加密服务器的链接.
 
 #### 请求头字段
-
  - **Cache-Control：** 客户端希望服务端如何缓存自己的请求数据，如"Cache-Control: no-cache"，"Cache-Control: max-age=0"；
  - **Connection：** 客户端是否希望与服务端之间保持长连接，如"Connection: close", "Connection: keep-alive"；
  - **Date：** 只有当请求方法为POST或PUT方法时客户端才可能会有些字段；
@@ -90,7 +90,7 @@ GET /demo.htm HTTP/1.1
 ### 响应消息结构
 #### 状态行
 由http协议版本、状态码、状态描述文字构成。如：
-```
+```js
 HTTP/1.1 200 OK
 ```
 #### 状态码
@@ -162,7 +162,7 @@ Transfer-Encoding: chunked
 ### 其他功能
 1.1版还新增了许多动词方法：PUT、PATCH、HEAD、OPTIONS、DELETE。
 另外，客户端请求的头信息新增了Host字段，用来指定服务器的域名。
-```bash
+```js
 Host: www.example.com
 ```
 有了Host字段，就可以将请求发往同一台服务器上的不同网站，为虚拟主机的兴起打下了基础。
@@ -200,7 +200,6 @@ Host: www.example.com
 是基于QUIC协议，基于UDP。
 
 特点:
-
 * 自定义连接机制：TCP以IP/端口标识，变化重新连接握手，UDP是一64位ID标识，是无连接；
 * 自定义重传机制：TCP 使用序号和应答传输，QUIC是使用递增序号传输； 无阻塞的多路复用：同一条 QUIC 可以创建多个steam。
 
