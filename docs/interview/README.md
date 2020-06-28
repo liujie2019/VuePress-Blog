@@ -6,7 +6,12 @@ title: 题目汇总
 1. [前端高频面试题整理 前端两年-月入30K | 掘金技术征文](https://juejin.im/post/5eb250f3f265da7bf6742594)
 2. [五万字面试宝典](https://juejin.im/post/5e91b01651882573716a9b23)
 3. [掘金15W阅读量前端面试复习必读文章【超三百篇文章/赠复习导图】](https://mp.weixin.qq.com/s/RDhJr8chFmMrICfnq6uEIA)
-## html
+### 浏览器
+1. []()
+### Vue
+1. [实现双向绑定Proxy比defineproperty优劣如何?](https://juejin.im/post/5acd0c8a6fb9a028da7cdfaf)
+## 常见问题
+### html
 1. H5中新增了哪些标签？标签语义化的好处？
 1. 常见的行内元素和块级元素？两者的区别是什么？空(void)元素有那些？
 2. script标签中，defer、async属性与默认行为的区别是什么?
@@ -19,7 +24,7 @@ title: 题目汇总
 9. Doctype作用？知道多少种Doctype文档类型？
 10. iframe的优缺点
 11. div+css的布局较table布局有什么优点
-## css
+### css
 1. 移动端适配1px的问题
 2. 介绍flex布局
 3. 其他css方式设置垂直居中
@@ -33,14 +38,14 @@ title: 题目汇总
 11. position属性
 12. 如何实现一个自适应的正方形
 13. 如何用css实现一个三角形
-## js
+### js
 1. 如何解决跨域的问题
 2. 观察者和发布-订阅的区别
 3. 介绍纯函数
 4. 如何设计一个localStorage，保证数据的实效性
 5. 两个对象如何比较
 6. 事件循环机制
-## 手写代码
+### 手写代码
 1. sum(2, 3)实现sum(2)(3)的效果
 2. 防抖和节流
 3. 深拷贝
@@ -60,7 +65,7 @@ title: 题目汇总
 17. 实现数组flat、filter等方法
 18. lazyMan
 19. 函数currying
-## ES6
+### ES6
 1. var、let及const区别
 2. 箭头函数与普通函数的区别
 3. 介绍暂时性死区
@@ -78,7 +83,7 @@ title: 题目汇总
 15. promise、async await、Generator的区别
 16. ES6的继承与ES5相比有什么不同
 17. js模块化（commonjs/AMD/CMD/ES6）
-## Webpack
+### Webpack
 1. webpack里面的插件是怎么实现的(阿里)
 2. dev-server是怎么跑起来(阿里)
 3. 使用过webpack里面哪些plugin和loader(阿里)
@@ -91,7 +96,7 @@ title: 题目汇总
 10. webpack执行的过程
 11. 如何编写一个loader、plugin
 12. tree-shaking作用，如何才能生效
-## React
+### React
 1. 介绍JSX
 2. 介绍虚拟DOM
 3. react异步渲染的概念，介绍Time Slicing和Suspense
@@ -100,7 +105,7 @@ title: 题目汇总
 6. pureComponent和FunctionComponent区别
 6. 介绍高阶组件
 7. react性能优化
-## Vue
+### Vue
 1. vue生命周期及对应的行为
 2. 双向绑定实现原理，defindeProxy/proxy
 3. v-if和v-for
@@ -118,14 +123,13 @@ title: 题目汇总
 15. 如何实现一个指令
 16. diff算法
 17. 虚拟dom为什么快
-## HTTP
+### HTTP
 1. 什么是HTTP？HTTP协议特点？
 2. HTTP报文组成
 3. HTTP请求过程
 4. TCP三次握手和四次挥手的理解
 5. 常见Http请求头(阿里)
-6.
-## 浏览器
+### 浏览器
 1. 浏览器缓存机制
 2. 渲染机制及重绘和回流
 3. 用户输入url到页面呈现的过程
@@ -136,19 +140,19 @@ title: 题目汇总
 8. 跨域（JSONP/CORS）
 9. 跨域时如何处理cookie
 10. 垃圾回收机制
-## Web安全
+### Web安全
 1. https
 2. 什么是xss，如何预防
 3. 什么是csrf，如何预防
 4. 为什么会造成csrf攻击
-## 前端性能优化
+### 前端性能优化
 1. 首屏加载如何优化
 2. 一个网页从请求到呈现花了很长时间，如何排查
-## Node
+### Node
 
-## linux
+### linux
 1. Linux 754 介绍
-## 算法
+### 算法
 1. 介绍冒泡排序，选择排序，冒泡排序如何优化？
 2. 介绍二叉搜索树的特点
 3. 深度优先和广度优先搜索
