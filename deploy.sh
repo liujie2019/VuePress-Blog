@@ -10,7 +10,7 @@ npm run docs:build
 cd docs/.vuepress/dist
 
 # 如果你是要部署到自定义域名
-echo 'docs.liujie.fun' > CNAME
+# echo 'docs.liujie.fun' > CNAME
 
 git init
 git add -A
