@@ -24,20 +24,20 @@ Virtual DOM的优势不在于单次的操作，而是在大量、频繁的数据
 
 最后，也是Virtual DOM最初的目的，就是更好的跨平台，比如Node.js就没有DOM，如果想实现SSR(服务端渲染)，那么一个方式就是借助Virtual DOM,因为Virtual DOM本身是JavaScript对象。
 
-<img src="assets/image-20200701232100469.png" alt="image-20200701232100469" style="zoom:50%;" />
+<img src="./assets/image-20200701232100469.png" alt="image-20200701232100469" style="zoom:50%;" />
 
 所谓的virtual dom，也就是虚拟节点。它通过JS的Object对象模拟DOM中的节点，然后再通过特定的render方法将其渲染成真实的DOM节点。
 dom diff则是通过JS层面的计算，返回一个patch对象，即补丁对象，再通过特定的操作解析patch对象，完成页面的重新渲染，
 上一张图让大家更加清晰点：
 
-<img src="assets/image-20200702202056938.png" alt="image-20200702202056938" style="zoom:50%;" />
+<img src="./assets/image-20200702202056938.png" alt="image-20200702202056938" style="zoom:50%;" />
 
 ## diff算法总体实现思路
 vdom是树状结构，其节点为vnode，vnode和浏览器DOM中的Node一一对应，通过vnode的elm属性可以访问到对应的Node即真实的DOM节点。
 
 Vue diff算法是基于Snabbdom来实现的，并在些基础上作了很多的调整和改进。
 
-<img src="assets/image-20200703191311957.png" alt="image-20200703191311957" style="zoom:50%;" />
+<img src="./assets/image-20200703191311957.png" alt="image-20200703191311957" style="zoom:50%;" />
 
 上图一张很经典的图，出自《React’s diff algorithm》。Vue的diff算法也采取了同样的策略，即仅在同级的vnode间做diff，递归地进行同级vnode的diff，最终实现整个DOM树的更新。
 
@@ -54,7 +54,7 @@ Vue diff算法是基于Snabbdom来实现的，并在些基础上作了很多的�
 * 不存在children的VNode
 
 那么，对于oldVnode和Vnode交叉组合的话，总共有如下9种情况：
-<img src="assets/image-20200703172009390.png" alt="image-20200703172009390" style="zoom:50%;" />
+<img src="./assets/image-20200703172009390.png" alt="image-20200703172009390" style="zoom:50%;" />
 
 patchVnode方法主要做了以下几件事情：
 * 判断Vnode和oldVnode是否指向同一个对象，如果是，那么直接return，进行节点复用即可
@@ -318,7 +318,7 @@ function createKeyToOldIdx (children, beginIdx, endIdx) {
   }
 ```
 ## 来看个具体例子分析
-<img src="assets/image-20200703191556564.png" alt="image-20200703191556564" style="zoom:30%;" />
+<img src="./assets/image-20200703191556564.png" alt="image-20200703191556564" style="zoom:30%;" />
 
 如上图的所示，oldVnode是1到10排列的Node列表，Vnode是一个乱序排列的Node列表。总结一下图中有以下几种类型的节点变化情况：
 
@@ -346,26 +346,26 @@ function createKeyToOldIdx (children, beginIdx, endIdx) {
 
 这种情况下，将节点1的变更更新到DOM，然后对其进行标记，标记方法是oldStart和newStart后移1位即可，过程中不需要移动DOM（更新DOM或许是要的，比如属性变更了，文本内容变更了等等）。
 
-<img src="assets/image-20200703193356140.png" alt="image-20200703193356140" style="zoom:30%;" />
+<img src="./assets/image-20200703193356140.png" alt="image-20200703193356140" style="zoom:30%;" />
 
 2. 处理尾部的同类型节点，即oldEnd和newEnd指向同类节点的情况，如下图中的节点10
 与情况1类似，这种情况下，将节点10的变更更新到DOM，然后oldEnd和newEnd前移1位进行标记，同样也不需要移动DOM
 
-<img src="assets/image-20200703193448741.png" alt="image-20200703193448741" style="zoom:30%;" />
+<img src="./assets/image-20200703193448741.png" alt="image-20200703193448741" style="zoom:30%;" />
 
 3. 处理头尾/尾头的同类型节点，即oldStart和newEnd，以及oldEnd和newStart指向同类节点的情况，如下图中的节点2和节点9
 
 先看节点2，其实是往后移了，移到哪里？移到oldEnd指向的节点（即节点9）的后面，移动之后标记该节点，将oldStart后移1位，newEnd前移一位。
 
-<img src="assets/image-20200703193607420.png" alt="image-20200703193607420" style="zoom:30%;" />
+<img src="./assets/image-20200703193607420.png" alt="image-20200703193607420" style="zoom:30%;" />
 
 操作结束之后情况如下图：
 
-<img src="assets/image-20200703193722444.png" alt="image-20200703193722444" style="zoom:30%;" />
+<img src="./assets/image-20200703193722444.png" alt="image-20200703193722444" style="zoom:30%;" />
 
 同样地，节点9也是类似的处理，处理完之后成了下面这样：
 
-<img src="assets/image-20200703193812180.png" alt="image-20200703193812180" style="zoom:30%;" />
+<img src="./assets/image-20200703193812180.png" alt="image-20200703193812180" style="zoom:30%;" />
 
 4. 处理新增的节点
 
@@ -373,7 +373,7 @@ newStart来到了节点11的位置，进行如下匹配步骤：3->11(头头)、
 
 那么就创建一个新的节点，插入DOM树，插到什么位置？插到oldStart指向的节点（即节点3）前面，然后将newStart后移1位标记为已处理（注意oldVdom中没有节点11，所以标记过程中它的指针不需要移动），处理之后如下图：
 
-<img src="assets/image-20200703193853191.png" alt="image-20200703193853191" style="zoom:30%;" />
+<img src="./assets/image-20200703193853191.png" alt="image-20200703193853191" style="zoom:30%;" />
 
 5. 处理更新的节点
 
@@ -381,17 +381,17 @@ newStart来到了节点11的位置，进行如下匹配步骤：3->11(头头)、
 
 那么需要在DOM树中移动它，移到哪里？**移到oldStart指向的节点（即节点3）前面**，与此同时将节点标记为已处理，跟前面几种情况有点不同，newVdom中该节点在指针下，可以移动newStart进行标记，而在oldVdom中该节点不在指针处，所以**采用设置为undefined的方式来标记**（一定要标记，否则指针移动会受到影响）
 
-<img src="assets/image-20200703194034656.png" alt="image-20200703194034656" style="zoom:30%;" />
+<img src="./assets/image-20200703194034656.png" alt="image-20200703194034656" style="zoom:30%;" />
 
 处理后变为：
 
-<img src="assets/image-20200703194058954.png" alt="image-20200703194058954" style="zoom:30%;" />
+<img src="./assets/image-20200703194058954.png" alt="image-20200703194058954" style="zoom:30%;" />
 
 6. 处理3、4、5、6节点
 
 经过第5步处理之后，我们看到了令人欣慰的一幕，newStart和oldStart又指向了同一个节点（即都指向节点3），很简单，按照（1）中的做法只需移动指针即可，非常高效，3、4、5、6都如此处理，处理完之后如下图：
 
-<img src="assets/image-20200703194138862.png" alt="image-20200703194138862" style="zoom:30%;" />
+<img src="./assets/image-20200703194138862.png" alt="image-20200703194138862" style="zoom:30%;" />
 
 7. 处理需删除的节点
 
@@ -401,7 +401,7 @@ OK，那我们在DOM树中将它们删除，再回到前面我们对节点7做�
 
 在应用中也可能会遇到oldVdom的起止点相遇了，但是newVdom的起止点没有相遇的情况，这个时候需要对newVdom中的未处理节点进行处理，这类节点属于更新中被加入的节点，需要将他们插入到DOM树中。
 
-<img src="assets/image-20200703194223529.png" alt="image-20200703194223529" style="zoom:30%;" />
+<img src="./assets/image-20200703194223529.png" alt="image-20200703194223529" style="zoom:30%;" />
 ## 为什么 Vue 中不要用 index 作为 key
 
 ## 小结
