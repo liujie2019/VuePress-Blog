@@ -6,6 +6,8 @@ title: 题目汇总
 1. [前端高频面试题整理 前端两年-月入30K | 掘金技术征文](https://juejin.im/post/5eb250f3f265da7bf6742594)
 2. [五万字面试宝典](https://juejin.im/post/5e91b01651882573716a9b23)
 3. [掘金15W阅读量前端面试复习必读文章【超三百篇文章/赠复习导图】](https://mp.weixin.qq.com/s/RDhJr8chFmMrICfnq6uEIA)
+4. [由浅入深，66条JavaScript面试知识点](https://juejin.im/post/5ef8377f6fb9a07e693a6061#heading-34)
+5. []()
 ### 浏览器
 1. []()
 ### Vue
