@@ -25,6 +25,7 @@ const react = require('./frontend/react/index.js');
 const web = require('./frontend/web/index.js');
 
 // 后端
+const docker = require('./backend/docker/index.js');
 const nodejs = require('./backend/nodejs/index.js');
 const koa = require('./backend/koa/index.js');
 const mongodb =require('./backend/mongodb/index.js');
@@ -81,6 +82,7 @@ module.exports = {
   '/frontend/web/': web,
 
   // 后端 backend
+  '/backend/docker/': docker,
   '/backend/nodejs/': nodejs,
   '/backend/koa/': koa,
   '/backend/mongodb/': mongodb,
